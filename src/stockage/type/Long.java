@@ -1,17 +1,22 @@
 package stockage.type;
 
-public class Long extends Type<Long> {
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+public class Long extends Type<java.lang.Long> {
 
 	@Override
-	protected void write(Long valeur) {
-		// TODO Auto-generated method stub
+	protected void write(DataOutputStream os, java.lang.Long valeur) throws IOException {
+		os.writeLong(valeur);
 		
 	}
 
 	@Override
-	protected Long read() {
-		// TODO Auto-generated method stub
-		return null;
+	protected java.lang.Long read(DataInputStream is) throws IOException {
+		return is.readLong();
 	}
+
+
 
 }

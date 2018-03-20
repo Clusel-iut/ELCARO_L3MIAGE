@@ -1,14 +1,21 @@
 package stockage.type;
 
-public class Integer extends Type<Integer> {
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+public class Integer extends Type<java.lang.Integer> {
 
 	@Override
-	protected void write(Integer valeur) {
+	protected void write(DataOutputStream os, java.lang.Integer valeur) throws IOException {
+		os.writeInt(valeur);
 		
 	}
-	
+
 	@Override
-	protected Integer read() {
-		return new Integer();
+	protected java.lang.Integer read(DataInputStream is) throws IOException {
+		return is.readInt();
 	}
+
+	
 }

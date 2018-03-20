@@ -3,6 +3,7 @@ package stockage;
 import java.util.List;
 
 public class Relation {
+	
 	private Schema schema;
 	private List<Tuple> tuples;
 	

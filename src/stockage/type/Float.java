@@ -1,17 +1,22 @@
 package stockage.type;
 
-public class Float extends Type<Float> {
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+public class Float extends Type<java.lang.Float> {
 
 	@Override
-	protected void write(Float valeur) {
-		// TODO Auto-generated method stub
+	protected void write(DataOutputStream os, java.lang.Float valeur) throws IOException {
+		os.writeFloat(valeur);
 		
 	}
 
 	@Override
-	protected Float read() {
-		// TODO Auto-generated method stub
-		return null;
+	protected java.lang.Float read(DataInputStream is) throws IOException {
+		return is.readFloat();
 	}
+
+	
 
 }

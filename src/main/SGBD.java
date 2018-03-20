@@ -26,6 +26,6 @@ public class SGBD {
 	* 
 	*/
 	private boolean isFinish() {
-		return true;
+		return isFinish;
 	}
 }

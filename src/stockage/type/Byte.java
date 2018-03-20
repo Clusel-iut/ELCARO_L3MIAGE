@@ -1,17 +1,22 @@
 package stockage.type;
 
-public class Byte extends Type<Byte> {
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+public class Byte extends Type<java.lang.Byte> {
 
 	@Override
-	protected void write(Byte valeur) {
-		// TODO Auto-generated method stub
+	protected void write(DataOutputStream os, java.lang.Byte valeur) throws IOException {
+		os.writeByte(valeur);
 		
 	}
 
 	@Override
-	protected Byte read() {
-		// TODO Auto-generated method stub
-		return null;
+	protected java.lang.Byte read(DataInputStream is) throws IOException {
+		return is.readByte();
 	}
+
+
 
 }

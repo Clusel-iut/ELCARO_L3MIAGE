@@ -1,17 +1,19 @@
 package stockage.type;
 
-public class Boolean extends Type<Boolean> {
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+public class Boolean extends Type<java.lang.Boolean> {
 
 	@Override
-	protected void write(Boolean valeur) {
-		// TODO Auto-generated method stub
-		
+	protected void write(DataOutputStream os, java.lang.Boolean valeur) throws IOException {
+		os.writeBoolean(valeur);		
 	}
 
 	@Override
-	protected Boolean read() {
-		// TODO Auto-generated method stub
-		return null;
+	protected java.lang.Boolean read(DataInputStream is) throws IOException {
+		return is.readBoolean();
 	}
 
 }
