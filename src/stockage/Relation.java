@@ -19,5 +19,9 @@ public abstract class Relation {
 		this.schema = schema;
 	}
 
+	public abstract List<Tuple> getTuples();
+
+	public abstract void setTuples(List<Tuple> tuples);
+	
 	
 }
