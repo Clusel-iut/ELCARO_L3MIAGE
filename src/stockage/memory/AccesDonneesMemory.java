@@ -11,8 +11,8 @@ public class AccesDonneesMemory extends StateFullRelation {
 
 	private Tuple[] tuples;
 
-	public AccesDonneesMemory(Schema schema) {
-		super(schema);
+	public AccesDonneesMemory(String name, Schema schema) {
+		super(name, schema);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -28,7 +28,7 @@ public class AccesDonneesMemory extends StateFullRelation {
 
 			@Override
 			public Tuple next() {
-				return this.tuples[index++];
+				return tuples[index++];
 			}
 
 		};
