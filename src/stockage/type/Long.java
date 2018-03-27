@@ -7,14 +7,20 @@ import java.io.IOException;
 public class Long extends Type<java.lang.Long> {
 
 	@Override
-	protected void write(DataOutputStream os, java.lang.Long valeur) throws IOException {
+	public void write(DataOutputStream os, java.lang.Long valeur) throws IOException {
 		os.writeLong(valeur);
 		
 	}
 
 	@Override
-	protected java.lang.Long read(DataInputStream is) throws IOException {
+	public java.lang.Long read(DataInputStream is) throws IOException {
 		return is.readLong();
+	}
+
+	@Override
+	public java.lang.Long parse(String data) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

@@ -4,17 +4,23 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class Varchar extends Type<StringBuffer> {
+public class Varchar extends Type<StringBuff> {
 
 	@Override
-	protected void write(DataOutputStream os, StringBuffer valeur) throws IOException {
+	public void write(DataOutputStream os, StringBuff valeur) throws IOException {
 		os.writeUTF(valeur.toString()); //TODO CHANGE
 
 	}
 
 	@Override
-	protected StringBuffer read(DataInputStream is) throws IOException {
-		return new StringBuffer(is.readUTF()); //TODO CHANGE
+	public StringBuff read(DataInputStream is) throws IOException {
+		return new StringBuff(); //TODO USE is
+	}
+
+	@Override
+	public StringBuff parse(String data) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -7,14 +7,20 @@ import java.io.IOException;
 public class Double extends Type<java.lang.Double> {
 
 	@Override
-	protected void write(DataOutputStream os, java.lang.Double valeur) throws IOException {
+	public void write(DataOutputStream os, java.lang.Double valeur) throws IOException {
 		os.writeDouble(valeur);
 		
 	}
 
 	@Override
-	protected java.lang.Double read(DataInputStream is) throws IOException {
+	public java.lang.Double read(DataInputStream is) throws IOException {
 		return is.readDouble();
+	}
+
+	@Override
+	public java.lang.Double parse(String data) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
