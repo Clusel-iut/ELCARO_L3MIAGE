@@ -2,26 +2,19 @@ package stockage;
 
 import java.util.List;
 
-public abstract class Relation {
+public abstract class Relation implements Iterable<Tuple>{
 	
-	private Schema schema;
+	private final String name;
+	private final Schema schema;
 	
-	public Relation(Schema schema) {
+	public Relation(String name, Schema schema) {
 		super();
+		this.name = name;
 		this.schema = schema;
 	}
 
 	public Schema getSchema() {
 		return schema;
 	}
-
-	public void setSchema(Schema schema) {
-		this.schema = schema;
-	}
-
-	public abstract List<Tuple> getTuples();
-
-	public abstract void setTuples(List<Tuple> tuples);
-	
 	
 }
