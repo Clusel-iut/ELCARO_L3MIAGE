@@ -2,6 +2,8 @@ package stockage;
 
 import java.util.List;
 
+import recherche.Predicat;
+
 public abstract class Relation implements Iterable<Tuple>{
 	
 	private final String name;

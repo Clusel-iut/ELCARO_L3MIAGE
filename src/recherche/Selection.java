@@ -1,17 +1,17 @@
 package recherche;
 
 import java.util.Iterator;
+import java.util.List;
 
 import stockage.*;
 
-public class Projection extends StateLessRelation{
+public class Selection extends StateLessRelation{
 	private final Relation rel;
-	private int[] indexes;
-	
-	public Projection(Relation rel, Schema schema) {
-		super(String.format("projection(%s)",rel),schema);
+	private Predicat predicat;
+	public Selection(Relation rel, Predicat predicat) {
+		super(String.format("Selection(%s)",rel),rel.getSchema());
 		this.rel = rel;
-		
+		this.predicat = predicat;
 	}
 	
 	@Override
@@ -27,9 +27,8 @@ public class Projection extends StateLessRelation{
 			@Override
 			public Tuple next() {
 				Tuple t1 = it1.next();
-				Object[] x = new Object[2];
-				for(int i = 0; i<indexes.length;i++){
-					x[i]= t1.get(indexes[i]);
+				while(!predicat.eval(t1) && this.hasNext()){
+					t1 = it1.next();
 				}
 				return new Tuple(x);
 			}
