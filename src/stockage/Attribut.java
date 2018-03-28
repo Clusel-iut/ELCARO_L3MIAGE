@@ -1,22 +1,19 @@
 package stockage;
 import stockage.type.Type;
 
-// TODO error valeur (set) 
 public class Attribut {
 	private Type type;
 
-	public Attribut(Type valeur) {
+	public Attribut(Type type) {
 		super();
-		this.type = valeur;
+		this.type = type;
 	}
 
-	public Type getValeur() {
+	/**
+	 * @return Type : retourn le type de l'attribut
+	 */
+	public Type getTypeOfAttribut() {
 		return type;
 	}
-
-	public void setValeur(Type valeur) {
-		this.type = valeur;
-	}
-	
 	
 }
