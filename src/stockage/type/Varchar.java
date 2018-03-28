@@ -19,8 +19,7 @@ public class Varchar extends Type<StringBuff> {
 
 	@Override
 	public StringBuff parse(String data) {
-		// TODO Auto-generated method stub
-		return null;
+		return new StringBuff(data);
 	}
 
 }

@@ -6,6 +6,10 @@ public class StringBuff implements Comparable<StringBuff> {
 	public StringBuff() {
 		sb = new StringBuffer();
 	}
+	
+	public StringBuff(String data) {
+		sb = new StringBuffer(data);
+	}
 
 	@Override
 	public int compareTo(StringBuff s) {

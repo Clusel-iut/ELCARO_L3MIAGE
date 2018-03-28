@@ -19,8 +19,7 @@ public class Short extends Type<java.lang.Short> {
 
 	@Override
 	public java.lang.Short parse(String data) {
-		// TODO Auto-generated method stub
-		return null;
+		return new java.lang.Short(data);
 	}
 
 	

@@ -19,8 +19,7 @@ public class Float extends Type<java.lang.Float> {
 
 	@Override
 	public java.lang.Float parse(String data) {
-		// TODO Auto-generated method stub
-		return null;
+		return new java.lang.Float(data);
 	}
 
 	

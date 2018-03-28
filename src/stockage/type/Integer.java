@@ -19,8 +19,7 @@ public class Integer extends Type<java.lang.Integer> {
 
 	@Override
 	public java.lang.Integer parse(String data) {
-		// TODO Auto-generated method stub
-		return null;
+		return new java.lang.Integer(data);
 	}
 
 	

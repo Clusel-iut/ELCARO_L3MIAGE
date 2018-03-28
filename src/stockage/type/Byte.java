@@ -19,8 +19,7 @@ public class Byte extends Type<java.lang.Byte> {
 
 	@Override
 	public java.lang.Byte parse(String data) {
-		// TODO Auto-generated method stub
-		return null;
+		return new java.lang.Byte(data);
 	}
 
 

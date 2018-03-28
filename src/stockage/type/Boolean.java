@@ -18,8 +18,7 @@ public class Boolean extends Type<java.lang.Boolean> {
 
 	@Override
 	public java.lang.Boolean parse(String data) {
-		// TODO Auto-generated method stub
-		return null;
+		return new java.lang.Boolean(data);
 	}
 
 }

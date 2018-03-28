@@ -19,8 +19,7 @@ public class Long extends Type<java.lang.Long> {
 
 	@Override
 	public java.lang.Long parse(String data) {
-		// TODO Auto-generated method stub
-		return null;
+		return new java.lang.Long(data);
 	}
 
 

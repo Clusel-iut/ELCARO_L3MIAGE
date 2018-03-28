@@ -19,8 +19,7 @@ public class Double extends Type<java.lang.Double> {
 
 	@Override
 	public java.lang.Double parse(String data) {
-		// TODO Auto-generated method stub
-		return null;
+		return new java.lang.Double(data);
 	}
 
 
