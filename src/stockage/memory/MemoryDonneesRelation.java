@@ -1,17 +1,15 @@
 package stockage.memory;
 
 import java.util.Iterator;
-import java.util.List;
-
 import stockage.Schema;
 import stockage.StateFullRelation;
 import stockage.Tuple;
 
-public class AccesDonneesMemory extends StateFullRelation {
+public class MemoryDonneesRelation extends StateFullRelation {
 
 	private Tuple[] tuples;
 
-	public AccesDonneesMemory(String name, Schema schema) {
+	public MemoryDonneesRelation(String name, Schema schema) {
 		super(name, schema);
 		// TODO Auto-generated constructor stub
 	}
