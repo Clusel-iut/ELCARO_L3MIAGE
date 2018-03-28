@@ -17,6 +17,10 @@ import stockage.type.Type;
 public class Schema implements Iterable<Attribut> {
 	private final Attribut[] attributs;
 
+	public Attribut[] getAttributs() {
+		return attributs;
+	}
+
 	public Schema(Attribut... attributs) {
 		this.attributs = attributs;
 	}
@@ -63,7 +67,7 @@ public class Schema implements Iterable<Attribut> {
 	public Tuple deserialisation(DataInputStream is) throws IOException {
 		List<Attribut> tuple = new ArrayList<Attribut>();
 		for (Attribut a : this) {
-			tuple.add(new Attribut((Type) a.getValeur().read(is))); //TODO NOT SAFE CAST 
+			tuple.add(new Attribut((Type) a.getTypeOfAttribut().read(is))); //TODO NOT SAFE CAST 
 		}
 
 		return new Tuple(tuple);
