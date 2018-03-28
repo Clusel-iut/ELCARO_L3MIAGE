@@ -17,6 +17,10 @@ import stockage.type.Type;
 public class Schema implements Iterable<Attribut> {
 	private final Attribut[] attributs;
 
+	public Attribut[] getAttributs() {
+		return attributs;
+	}
+
 	public Schema(Attribut... attributs) {
 		this.attributs = attributs;
 	}
