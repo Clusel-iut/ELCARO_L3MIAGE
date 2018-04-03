@@ -25,15 +25,15 @@ public class Schema implements Iterable<Attribut> {
 		this.attributs = attributs;
 	}
 
-	public Schema(String fileName) throws FileNotFoundException {
-		Schema schema = null;
-		XMLDecoder decoder = new XMLDecoder(new FileInputStream(fileName));
-		try {
-			this.attributs = ((Schema) decoder.readObject()).attributs;
-		} finally {
-			decoder.close();
-		}
-	}
+//	public Schema(String fileName) throws FileNotFoundException {
+//		Schema schema = null;
+//		XMLDecoder decoder = new XMLDecoder(new FileInputStream(fileName));
+//		try {
+//			this.attributs = ((Schema) decoder.readObject()).attributs;
+//		} finally {
+//			decoder.close();
+//		}
+//	}
 
 	public void saveSchema(String fileName) throws FileNotFoundException {
 		XMLEncoder encoder = new XMLEncoder(new FileOutputStream(fileName));

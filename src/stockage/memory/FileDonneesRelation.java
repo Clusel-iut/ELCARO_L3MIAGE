@@ -1,16 +1,28 @@
 package stockage.memory;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import stockage.Attribut;
 import stockage.Schema;
 import stockage.StateFullRelation;
 import stockage.Tuple;
+import stockage.type.Type;
 
 public class FileDonneesRelation extends StateFullRelation {
+	
+	/**  Accès aux tuples. */
+	private DataInputStream isTuples;
+	private DataOutputStream osTuples;
 
-	private DataInputStream tuples;
-
+	/**
+	 * @param name : nom de la table de base de donnée
+	 * @param schema : contient les colonnes de la tables
+	 */
 	public FileDonneesRelation(String name, Schema schema) {
 		super(name, schema);
 		// TODO Auto-generated constructor stub
@@ -24,7 +36,7 @@ public class FileDonneesRelation extends StateFullRelation {
 			@Override
 			public boolean hasNext(){
 				try {
-					return (tuples.available() > 0);
+					return (isTuples.available() > 0);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -36,7 +48,7 @@ public class FileDonneesRelation extends StateFullRelation {
 			public Tuple next(){
 				// TODO index à ajouter pour ne pas lire toujours le premier
 				try {
-					return getSchema().deserialisation(tuples);
+					return getSchema().deserialisation(isTuples);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -45,6 +57,41 @@ public class FileDonneesRelation extends StateFullRelation {
 			}
 
 		};
+	}
+	
+	/**
+	 * Permet d'ajouter le tuple à la fin de la table.
+	 * @param tuple
+	 */
+	public void addTuple(Tuple tuple) {
+		//this.getSchema().deserialisation(isTuples);
+		try {
+			
+			isTuples.skipBytes(isTuples.available());
+			List<Attribut> AttTuple = tuple.getAttributs(); 
+			List<Object> valeurs = tuple.getValeurs();
+			
+			for (Attribut a : AttTuple) {
+				for(Object o : valeurs)
+				{
+					a.getTypeOfAttribut().write(osTuples, (a.getTypeOfAttribut()) o); // TODO finish
+				}
+				
+			}
+			
+			isTuples.reset();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Permet de supprimer le tuple de la table.
+	 * @param tuple
+	 */
+	public void deleteTuple(Tuple tuple) {
+		
 	}
 
 }

@@ -2,11 +2,13 @@ package stockage;
 import stockage.type.Type;
 
 public class Attribut {
-	private Type type;
+	private final Type type;
+	private final String nom;
 
-	public Attribut(Type type) {
+	public Attribut(Type type, String nom) {
 		super();
 		this.type = type;
+		this.nom=nom;
 	}
 
 	/**

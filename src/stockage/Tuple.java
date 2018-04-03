@@ -1,22 +1,34 @@
 package stockage;
 
+import java.util.Iterator;
 import java.util.List;
 
-public class Tuple {
-	private List<Attribut> attributs;
+public class Tuple implements Iterable<Object> {
+	
+	private final Object[] valeurs;
 
-	public Tuple(List<Attribut> attributs) {
+	public Tuple(Object... v) {
 		super();
-		this.attributs = attributs;
+		this.valeurs = v;
 	}
 
-	public List<Attribut> getAttributs() {
-		return attributs;
+	@Override
+	public Iterator<Object> iterator() {
+		return new Iterator<Object>() {
+
+			private int index = 0;
+
+			@Override
+			public boolean hasNext() {
+				return (index < valeurs.length);
+			}
+
+			@Override
+			public Object next() {
+				return valeurs[index++];
+			}
+
+		};
 	}
 
-	public void setAttributs(List<Attribut> attributs) {
-		this.attributs = attributs;
-	}
-	
-	
 }
