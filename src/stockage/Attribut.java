@@ -13,7 +13,7 @@ public class Attribut {
 	}
 
 	/**
-	 * @return Type : retourn le type de l'attribut
+	 * @return Type : retourne le type de l'attribut
 	 */
 	public Type<?> getTypeOfAttribut() {
 		return this.type;

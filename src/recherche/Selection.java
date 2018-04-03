@@ -18,7 +18,6 @@ public class Selection extends StateLessRelation {
 	}
 	
 	@Override public Iterator<Tuple> iterator(){
-		// Il est dans FullMemoryRelation.
 		return new Iterator<Tuple>(){
 			private Iterator<Tuple> iterator = rel.iterator();
 			private Tuple nextTuple;

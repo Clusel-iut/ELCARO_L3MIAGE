@@ -69,13 +69,14 @@ public class FileDonneesRelation extends StateFullRelation {
 		try {
 			
 			isTuples.skipBytes(isTuples.available());
-			List<Attribut> AttTuple = this.getSchema().deserialisation(isTuples); 
+			Tuple attTuple = this.getSchema().deserialisation(isTuples); 
 			List<Object> valeurs = tuple.getValeurs();
 			
-			while( AttTuple.iterator().hasNext()){
+			while( attTuple.iterator().hasNext()){
 				for(Object o : valeurs)
 				{
-					AttTuple.iterator().next().getTypeOfAttribut().write(osTuples, (a.getTypeOfAttribut()) o); // TODO finish
+					Attribut a = attTuple.iterator().next();
+					.getTypeOfAttribut().write(osTuples, (attTuple.getTypeOfAttribut()) o); // TODO finish
 				}
 				
 			}

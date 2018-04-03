@@ -11,7 +11,7 @@ import stockage.type.TypeBoolean;
 import stockage.type.TypeInteger;
 import stockage.type.StringBuff;
 
-public class Test2 {
+public class TestSelectionIntBool {
 
 	public static void main(String[] args) {
 		Schema sc = new Schema(new Attribut(new TypeInteger(), "ENTIER"),
@@ -35,7 +35,7 @@ public class Test2 {
 		Relation s1 = new Selection(r, new Predicat() {
 			@Override
 			public boolean eval(Tuple tuple) {
-				return ((Integer) tuple.get(0) > 400);
+				return ((Integer) tuple.getValue(0) > 400);
 			}
 		});
 		for (Tuple t : s1) {
@@ -46,7 +46,7 @@ public class Test2 {
 		Relation s2 = new Selection(r, new Predicat() {
 			@Override
 			public boolean eval(Tuple tuple) {
-				return tuple.get(0).equals(new Boolean(false));
+				return tuple.getValue(0).equals(new Boolean(false));
 			}
 		});
 		for (Tuple t : s2) {

@@ -21,6 +21,7 @@ public class MemoryDonneesRelation extends StateFullRelation {
 	}
 
 	public Iterator<Tuple> iterator() {
+		
 		return new Iterator<Tuple>() {
 
 			private int index = 0;
