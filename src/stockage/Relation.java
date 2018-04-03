@@ -18,7 +18,11 @@ public abstract class Relation implements Iterable<Tuple> {
 	}
 
 	public Schema getSchema() {
-		return schema;
+		return this.schema;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 }

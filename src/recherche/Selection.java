@@ -30,7 +30,7 @@ public class Selection extends StateLessRelation{
 				while(!predicat.eval(t1) && this.hasNext()){
 					t1 = it1.next();
 				}
-				return new Tuple(x);
+				return t1;
 			}
 		};
 	}

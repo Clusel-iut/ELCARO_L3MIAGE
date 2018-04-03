@@ -1,10 +1,15 @@
 package stockage;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import stockage.type.Type;
+
 public class Tuple implements Iterable<Object> {
-	
+
 	private final Object[] valeurs;
 
 	public Tuple(Object... v) {
@@ -31,4 +36,11 @@ public class Tuple implements Iterable<Object> {
 		};
 	}
 
+	// TODO Serialisation / Deserialisation finish
+
+	public <T> T get(int index) {
+		if (valeurs.length <= index) return null; // TODO throws Errors
+		if(index < 0) return null; // TODO throws Errors
+		return (T) valeurs[index];
+	}
 }

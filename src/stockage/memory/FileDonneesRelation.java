@@ -14,14 +14,16 @@ import stockage.Tuple;
 import stockage.type.Type;
 
 public class FileDonneesRelation extends StateFullRelation {
-	
-	/**  Accès aux tuples. */
+
+	/** Accès aux tuples. */
 	private DataInputStream isTuples;
 	private DataOutputStream osTuples;
 
 	/**
-	 * @param name : nom de la table de base de donnée
-	 * @param schema : contient les colonnes de la tables
+	 * @param name
+	 *            : nom de la table de base de donnée
+	 * @param schema
+	 *            : contient les colonnes de la tables
 	 */
 	public FileDonneesRelation(String name, Schema schema) {
 		super(name, schema);
@@ -34,18 +36,18 @@ public class FileDonneesRelation extends StateFullRelation {
 			private int index = 0;
 
 			@Override
-			public boolean hasNext(){
+			public boolean hasNext() {
 				try {
 					return (isTuples.available() > 0);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return false; //TODO use throws case 
+				return false; // TODO use throws case
 			}
 
 			@Override
-			public Tuple next(){
+			public Tuple next() {
 				// TODO index à ajouter pour ne pas lire toujours le premier
 				try {
 					return getSchema().deserialisation(isTuples);
@@ -53,28 +55,27 @@ public class FileDonneesRelation extends StateFullRelation {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return null; //TODO use throws case 
+				return null; // TODO use throws case
 			}
 
 		};
 	}
-	
+
 	/**
 	 * Permet d'ajouter le tuple à la fin de la table.
 	 * @param tuple
 	 */
 	public void addTuple(Tuple tuple) {
-		//this.getSchema().deserialisation(isTuples);
 		try {
 			
 			isTuples.skipBytes(isTuples.available());
-			List<Attribut> AttTuple = tuple.getAttributs(); 
+			List<Attribut> AttTuple = this.getSchema().deserialisation(isTuples); 
 			List<Object> valeurs = tuple.getValeurs();
 			
-			for (Attribut a : AttTuple) {
+			while( AttTuple.iterator().hasNext()){
 				for(Object o : valeurs)
 				{
-					a.getTypeOfAttribut().write(osTuples, (a.getTypeOfAttribut()) o); // TODO finish
+					AttTuple.iterator().next().getTypeOfAttribut().write(osTuples, (a.getTypeOfAttribut()) o); // TODO finish
 				}
 				
 			}
@@ -88,10 +89,11 @@ public class FileDonneesRelation extends StateFullRelation {
 
 	/**
 	 * Permet de supprimer le tuple de la table.
+	 * 
 	 * @param tuple
 	 */
 	public void deleteTuple(Tuple tuple) {
-		
+
 	}
 
 }

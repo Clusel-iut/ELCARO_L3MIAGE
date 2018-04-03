@@ -4,7 +4,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class Varchar extends Type<StringBuff> {
+public class TypeVarchar extends Type<StringBuff> {
+	
+	public TypeVarchar() {
+		super();
+		this.nomType = "TypeVarchar";
+	}
 
 	@Override
 	public void write(DataOutputStream os, StringBuff valeur) throws IOException {
