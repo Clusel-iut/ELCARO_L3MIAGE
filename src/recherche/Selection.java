@@ -5,32 +5,36 @@ import java.util.List;
 
 import stockage.*;
 
-public class Selection extends StateLessRelation{
+public class Selection extends StateLessRelation {
+	
 	private final Relation rel;
+	
 	private Predicat predicat;
+	
 	public Selection(Relation rel, Predicat predicat) {
 		super(String.format("Selection(%s)",rel),rel.getSchema());
 		this.rel = rel;
 		this.predicat = predicat;
 	}
 	
-	@Override
-	public Iterator<Tuple> iterator() {
-		Iterator<Tuple> it1 = rel.iterator();
+	@Override public Iterator<Tuple> iterator(){
 		// Il est dans FullMemoryRelation.
 		return new Iterator<Tuple>(){
-			Iterator<Tuple> it1 = rel.iterator();
-			@Override
-			public boolean hasNext() {
-				return it1.hasNext();
+			private Iterator<Tuple> iterator = rel.iterator();
+			private Tuple nextTuple;
+			private boolean hasNext;
+			{setNext();}
+			@Override public boolean hasNext() {return hasNext;}
+			@Override public Tuple next(){
+				Tuple temp = nextTuple;
+				setNext();
+				return temp;
 			}
-			@Override
-			public Tuple next() {
-				Tuple t1 = it1.next();
-				while(!predicat.eval(t1) && this.hasNext()){
-					t1 = it1.next();
-				}
-				return t1;
+			
+			private void setNext(){
+				boolean b = false;
+				while(iterator.hasNext() && !(b=predicat.eval(nextTuple = iterator.next())));
+				hasNext=b;
 			}
 		};
 	}

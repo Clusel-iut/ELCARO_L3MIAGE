@@ -36,6 +36,11 @@ public class Test {
 			for(Object o : t) System.out.print(o+" ");
 			System.out.println();
 		}
+		r.deleteTuple(new Tuple(new StringBuff("MORAT"),new StringBuff("PHILIPPE")));
+		for(Tuple t : r){
+			for(Object o : t) System.out.print(o+" ");
+			System.out.println();
+		}
 	}
 
 }
