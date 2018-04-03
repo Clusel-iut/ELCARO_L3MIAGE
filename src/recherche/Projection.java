@@ -27,7 +27,7 @@ public class Projection extends StateLessRelation {
 			for(int j = 0; j<rel.getSchema().getAttributs().length; j++)
 			{
 				if(schema.getAttributs()[i].getClass() == rel.getSchema().getAttributs()[j].getClass() 
-						&& schema.getAttributs()[i].getValeur() == rel.getSchema().getAttributs()[j].getValeur())
+						&& schema.getAttributs()[i].equals(rel.getSchema().getAttributs()[j])/*.getValeur()*/)
 				{
 					indexes.add(j);
 				}
@@ -56,9 +56,9 @@ public class Projection extends StateLessRelation {
 			public Tuple next() {
 				if (this.hasNext()) {
 					Tuple t1 = it1.next();
-					List<Attribut> attributs = null;
+					List<Object> attributs = null;
 					for (int i = 0; i < indexes.size(); i++) {
-						attributs.add(t1.getAttributs().get(indexes.get(i)));
+						attributs.add(t1.iterator().next());
 					}
 					return new Tuple(attributs);
 				}
