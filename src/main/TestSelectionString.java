@@ -10,7 +10,7 @@ import stockage.memory.MemoryDonneesRelation;
 import stockage.type.StringBuff;
 import stockage.type.TypeVarchar;
 
-public class Test {
+public class TestSelectionString {
 
 	public static void main(String[] args) {
 		Schema sc = new Schema(new Attribut(new TypeVarchar(),"NOM"),new Attribut(new TypeVarchar(),"PRENOM"));
@@ -30,9 +30,14 @@ public class Test {
 			System.out.println();
 		}
 		Relation s = new Selection(r,new Predicat(){
-			@Override public boolean eval(Tuple tuple) { return ((StringBuff)tuple.get(0)).sb.toString().length()>6;
+			@Override public boolean eval(Tuple tuple) { return ((StringBuff)tuple.getValue(0)).sb.toString().length()>6;
 			}});
 		for(Tuple t : s){
+			for(Object o : t) System.out.print(o+" ");
+			System.out.println();
+		}
+		r.deleteTuple(new Tuple(new StringBuff("MORAT"),new StringBuff("PHILIPPE")));
+		for(Tuple t : r){
 			for(Object o : t) System.out.print(o+" ");
 			System.out.println();
 		}

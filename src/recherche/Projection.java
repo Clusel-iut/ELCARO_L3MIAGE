@@ -1,5 +1,6 @@
 package recherche;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -7,62 +8,71 @@ import stockage.*;
 
 public class Projection extends StateLessRelation {
 	private final Relation rel;
-	private List<Integer> indexes;
+	private ArrayList<Integer> indexes;
 
 	public Projection(Relation rel, Schema schema) {
 		super(String.format("projection(%s)", rel), schema);
 		this.rel = rel;
-		
+		indexes = new ArrayList<Integer>();
 		try {
 			this.getIndexes(schema);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void getIndexes(Schema schema) throws Exception
-	{
-		for(int i = 0; i<schema.getAttributs().length; i++)
-		{
-			for(int j = 0; j<rel.getSchema().getAttributs().length; j++)
-			{
-				if(schema.getAttributs()[i].getClass() == rel.getSchema().getAttributs()[j].getClass() 
-						&& schema.getAttributs()[i].equals(rel.getSchema().getAttributs()[j])/*.getValeur()*/)
-				{
-					indexes.add(j);
+
+	// TODO BUG AVEC TEST 3
+	// TODO MAUVAIS NOM
+	private void getIndexes(Schema schema) throws Exception {
+
+		Attribut[] attributsSchemaProjection = schema.getAttributs();
+		
+		for (int indexSchemaProjection = 0; indexSchemaProjection < attributsSchemaProjection.length; indexSchemaProjection++) {
+			Attribut[] attributsSchemaActuel = rel.getSchema().getAttributs();
+						
+			for (int indexSchemaActuel = 0; indexSchemaActuel < attributsSchemaActuel.length; indexSchemaActuel++) {
+				if (attributsSchemaProjection[indexSchemaProjection].getTypeOfAttribut().toString().equals(attributsSchemaActuel[indexSchemaActuel].getTypeOfAttribut().toString())
+						&& attributsSchemaProjection[indexSchemaProjection].getNomOfAttribut().equals(attributsSchemaActuel[indexSchemaActuel].getNomOfAttribut())) {
+					indexes.add(indexSchemaActuel);
 				}
 			}
 		}
-		
-		if(!(indexes.size() == schema.getAttributs().length))
-		{
+	
+		if (attributsSchemaProjection.length != indexes.size()) {
 			throw new Exception("Attribut(s) introuvable(s)");
 		}
 	}
 
 	@Override
 	public Iterator<Tuple> iterator() {
-		Iterator<Tuple> it1 = rel.iterator();
-		// Il est dans FullMemoryRelation.
 		return new Iterator<Tuple>() {
-			Iterator<Tuple> it1 = rel.iterator();
+			private Iterator<Tuple> iterator = rel.iterator();
+			private Tuple nextTuple;
+			private boolean hasNext;
+			{setNext();}
 
 			@Override
 			public boolean hasNext() {
-				return it1.hasNext();
+				return hasNext;
 			}
 
 			@Override
 			public Tuple next() {
-				if (this.hasNext()) {
-					Tuple t1 = it1.next();
-					List<Object> attributs = null;
-					for (int i = 0; i < indexes.size(); i++) {
-						attributs.add(t1.iterator().next());
-					}
-					return new Tuple(attributs);
+				Tuple temp = nextTuple;
+				setNext();
+				return temp;
+			}
+
+			// TODO PAS FONCTIONNEL
+			private void setNext() {
+				boolean b = false;
+				Tuple t1 = iterator.next();
+				ArrayList<Object> attributs = new ArrayList<Object>();
+				for (int i = 0; i < indexes.size(); i++) {
+					attributs.add(t1.iterator().next());
 				}
-				return null;
+				nextTuple = t1;
+				hasNext = b;
 			}
 		};
 	}

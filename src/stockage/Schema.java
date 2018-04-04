@@ -64,13 +64,13 @@ public class Schema implements Iterable<Attribut> {
 		};
 	}
 
-	public List<Attribut> deserialisation(DataInputStream is) throws IOException {
+	public Tuple deserialisation(DataInputStream is) throws IOException {
 		List<Attribut> tuple = new ArrayList<Attribut>();
 		for (Attribut a : this) {
 			//TODO NOT SAFE CAST Serialization
-			tuple.add(new Attribut((Type) a.getTypeOfAttribut().read(is), a.getNomOfAttribut()));
+			tuple.add(new Attribut((Type<?>) a.getTypeOfAttribut().read(is), a.getNomOfAttribut()));
 		}
-		return tuple;
+		return new Tuple(tuple);
 	}
 
 }

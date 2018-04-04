@@ -38,7 +38,7 @@ public class Tuple implements Iterable<Object> {
 
 	// TODO Serialisation / Deserialisation finish
 
-	public <T> T get(int index) {
+	public <T> T getValue(int index) {
 		if (valeurs.length <= index) return null; // TODO throws Errors
 		if(index < 0) return null; // TODO throws Errors
 		return (T) valeurs[index];
