@@ -21,23 +21,23 @@ public class Projection extends StateLessRelation {
 		}
 	}
 
-	// TODO BUG AVEC TEST 3
-	// TODO MAUVAIS NOM
 	private void getIndexes(Schema schema) throws Exception {
 
 		Attribut[] attributsSchemaProjection = schema.getAttributs();
-		
+
 		for (int indexSchemaProjection = 0; indexSchemaProjection < attributsSchemaProjection.length; indexSchemaProjection++) {
 			Attribut[] attributsSchemaActuel = rel.getSchema().getAttributs();
-						
+
 			for (int indexSchemaActuel = 0; indexSchemaActuel < attributsSchemaActuel.length; indexSchemaActuel++) {
-				if (attributsSchemaProjection[indexSchemaProjection].getTypeOfAttribut().toString().equals(attributsSchemaActuel[indexSchemaActuel].getTypeOfAttribut().toString())
-						&& attributsSchemaProjection[indexSchemaProjection].getNomOfAttribut().equals(attributsSchemaActuel[indexSchemaActuel].getNomOfAttribut())) {
+				if (attributsSchemaProjection[indexSchemaProjection].getTypeOfAttribut().toString()
+						.equals(attributsSchemaActuel[indexSchemaActuel].getTypeOfAttribut().toString())
+						&& attributsSchemaProjection[indexSchemaProjection].getNomOfAttribut()
+								.equals(attributsSchemaActuel[indexSchemaActuel].getNomOfAttribut())) {
 					indexes.add(indexSchemaActuel);
 				}
 			}
 		}
-	
+
 		if (attributsSchemaProjection.length != indexes.size()) {
 			throw new Exception("Attribut(s) introuvable(s)");
 		}
@@ -48,31 +48,25 @@ public class Projection extends StateLessRelation {
 		return new Iterator<Tuple>() {
 			private Iterator<Tuple> iterator = rel.iterator();
 			private Tuple nextTuple;
-			private boolean hasNext;
-			{setNext();}
 
 			@Override
 			public boolean hasNext() {
-				return hasNext;
+				return iterator.hasNext();
 			}
 
 			@Override
 			public Tuple next() {
-				Tuple temp = nextTuple;
 				setNext();
-				return temp;
+				return nextTuple;
 			}
 
-			// TODO PAS FONCTIONNEL
 			private void setNext() {
-				boolean b = false;
 				Tuple t1 = iterator.next();
 				ArrayList<Object> attributs = new ArrayList<Object>();
-				for (int i = 0; i < indexes.size(); i++) {
-					attributs.add(t1.iterator().next());
+				for (int index = 0; index < indexes.size(); index++) {
+					attributs.add(t1.getValue(indexes.get(index)));
 				}
-				nextTuple = t1;
-				hasNext = b;
+				nextTuple = new Tuple(attributs);
 			}
 		};
 	}
