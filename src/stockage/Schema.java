@@ -25,15 +25,30 @@ public class Schema implements Iterable<Attribut> {
 		this.attributs = attributs;
 	}
 
-//	public Schema(String fileName) throws FileNotFoundException {
-//		Schema schema = null;
-//		XMLDecoder decoder = new XMLDecoder(new FileInputStream(fileName));
-//		try {
-//			this.attributs = ((Schema) decoder.readObject()).attributs;
-//		} finally {
-//			decoder.close();
-//		}
-//	}
+	public Schema(Schema schema1, Schema schema2) {
+		ArrayList<Attribut> list = new ArrayList<Attribut>();
+		int longSch = 0;
+		for (Attribut att : schema1) {
+			list.add(att);
+			longSch++;
+		}
+		for (Attribut att : schema2) {
+			list.add(att);
+			longSch++;
+		}
+		this.attributs = new Attribut[longSch];
+		list.toArray(this.attributs);
+	}
+
+	// public Schema(String fileName) throws FileNotFoundException {
+	// Schema schema = null;
+	// XMLDecoder decoder = new XMLDecoder(new FileInputStream(fileName));
+	// try {
+	// this.attributs = ((Schema) decoder.readObject()).attributs;
+	// } finally {
+	// decoder.close();
+	// }
+	// }
 
 	public void saveSchema(String fileName) throws FileNotFoundException {
 		XMLEncoder encoder = new XMLEncoder(new FileOutputStream(fileName));
@@ -67,12 +82,10 @@ public class Schema implements Iterable<Attribut> {
 	public Tuple deserialisation(DataInputStream is) throws IOException {
 		List<Attribut> tuple = new ArrayList<Attribut>();
 		for (Attribut a : this) {
-			//TODO NOT SAFE CAST Serialization
+			// TODO NOT SAFE CAST Serialization
 			tuple.add(new Attribut((Type<?>) a.getTypeOfAttribut().read(is), a.getNomOfAttribut()));
 		}
 		return new Tuple(tuple);
 	}
 
 }
-
-
