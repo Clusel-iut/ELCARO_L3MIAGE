@@ -9,7 +9,6 @@ import stockage.Tuple;
 import stockage.memory.MemoryDonneesRelation;
 import stockage.type.TypeBoolean;
 import stockage.type.TypeInteger;
-import stockage.type.StringBuff;
 
 public class TestSelectionIntBool {
 
@@ -27,6 +26,7 @@ public class TestSelectionIntBool {
 		for (Attribut att : sc) {
 			System.out.println(att.toString());
 		}
+		
 		for (Tuple t : r) {
 			for (Object o : t)
 				System.out.print(o + " ");
@@ -46,9 +46,10 @@ public class TestSelectionIntBool {
 		Relation s2 = new Selection(r, new Predicat() {
 			@Override
 			public boolean eval(Tuple tuple) {
-				return tuple.getValue(0).equals(new Boolean(false));
+				return tuple.getValue(1).equals(new Boolean(false));
 			}
 		});
+		
 		for (Tuple t : s2) {
 			for (Object o : t)
 				System.out.print(o + " ");

@@ -1,8 +1,6 @@
 package recherche;
 
 import java.util.Iterator;
-import java.util.List;
-
 import stockage.*;
 
 public class Selection extends StateLessRelation {
