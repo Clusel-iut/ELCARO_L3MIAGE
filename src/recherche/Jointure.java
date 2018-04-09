@@ -47,7 +47,7 @@ public class Jointure extends StateLessRelation {
 			private void setNext() {
 				Tuple t1 = iterator1.next();
 				Tuple t2 = iterator2.next();
-
+				// TODO /!\ Comme c'est implémenté, il faut que les tuples corepondent (PIGNARD -> PIGNARD) 
 				ArrayList<Object> attributs = new ArrayList<Object>();
 				for (int index = 0; index < sc.getAttributs().length; index++) {
 					if (index < rel1.getSchema().getAttributs().length) {

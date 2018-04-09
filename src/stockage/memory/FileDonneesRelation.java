@@ -25,15 +25,14 @@ public class FileDonneesRelation extends StateFullRelation {
 	 * @param schema
 	 *            : contient les colonnes de la tables
 	 */
-	public FileDonneesRelation(String name, Schema schema) {
+	public FileDonneesRelation(String name, Schema schema, DataInputStream is, DataOutputStream os) {
 		super(name, schema);
-		// TODO Auto-generated constructor stub
+		this.isTuples = is;
+		this.osTuples = os;
 	}
 
 	public Iterator<Tuple> iterator() {
 		return new Iterator<Tuple>() {
-
-			private int index = 0;
 
 			@Override
 			public boolean hasNext() {
@@ -52,7 +51,6 @@ public class FileDonneesRelation extends StateFullRelation {
 				try {
 					return getSchema().deserialisation(isTuples);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return null; // TODO use throws case
@@ -62,28 +60,23 @@ public class FileDonneesRelation extends StateFullRelation {
 	}
 
 	/**
-	 * Permet d'ajouter le tuple à la fin de la table.
+	 * Permet d'ajouter le tuple à la fin du fichier.
+	 * 
 	 * @param tuple
 	 */
 	public void addTuple(Tuple tuple) {
 		try {
-			
 			isTuples.skipBytes(isTuples.available());
-			Tuple attTuple = this.getSchema().deserialisation(isTuples); 
-			List<Object> valeurs = tuple.getValeurs();
-			
-			while( attTuple.iterator().hasNext()){
-				for(Object o : valeurs)
-				{
-					Attribut a = attTuple.iterator().next();
-					.getTypeOfAttribut().write(osTuples, (attTuple.getTypeOfAttribut()) o); // TODO finish
+			while (iterator().hasNext())
+				iterator().next();
+
+			for (Attribut a : getSchema()) {
+				for (Object obj : tuple) {
+					a.getTypeOfAttribut().write(osTuples, obj);
 				}
-				
 			}
-			
 			isTuples.reset();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -94,7 +87,15 @@ public class FileDonneesRelation extends StateFullRelation {
 	 * @param tuple
 	 */
 	public void deleteTuple(Tuple tuple) {
+		Tuple t = new Tuple();
+		while (iterator().hasNext()) {
+			t = iterator().next();
+			if (tuple.equals(t))
+				break;
+		}
 
+		if (tuple.equals(t)) {
+			
+		}
 	}
-
 }
