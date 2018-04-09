@@ -1,22 +1,63 @@
 package recherche;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
+import stockage.Attribut;
+import stockage.Relation;
 import stockage.Schema;
 import stockage.StateLessRelation;
 import stockage.Tuple;
 
-public class Produit extends StateLessRelation{
+public class Produit extends StateLessRelation {
+	private final Relation rel1;
+	private final Relation rel2;
+	private final Schema sc;
 
-	public Produit(String name, Schema schema) {
-		super(name, schema);
-		// TODO Auto-generated constructor stub
+	public Produit(Relation rel1, Relation rel2) {
+		super(String.format("produit(%s%s)", rel1, rel2), new Schema(rel1.getSchema(), rel2.getSchema()));
+		this.sc = new Schema(rel1.getSchema(), rel2.getSchema());
+		this.rel1 = rel1;
+		this.rel2 = rel2;
 	}
 
 	@Override
 	public Iterator<Tuple> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<Tuple>() {
+			private Iterator<Tuple> iterator1 = rel1.iterator();
+			private Iterator<Tuple> iterator2 = rel2.iterator();
+			private Tuple nextTuple;
+			private boolean parcoursIterator1 = iterator1.hasNext();
+
+			@Override
+			public boolean hasNext() {
+				// TODO ils doivent avoir le même nombres de tuples ?
+				// TODO Lever une erreur s'il reste des tuples dans l'un des
+				// deux ?
+				return iterator1.hasNext() && iterator2.hasNext();
+			}
+
+			@Override
+			public Tuple next() {
+				setNext();
+				return nextTuple;
+			}
+
+			private void setNext() {
+				Tuple t1 = iterator1.next();
+				Tuple t2 = iterator2.next();
+
+				ArrayList<Object> attributs = new ArrayList<Object>();
+				for (int index = 0; index < sc.getAttributs().length; index++) {
+					if (index < rel1.getSchema().getAttributs().length) {
+						attributs.add(t1.getValue(index));
+					} else {
+						attributs.add(t2.getValue(index - rel1.getSchema().getAttributs().length));
+					}
+				}
+				nextTuple = new Tuple(attributs);
+			}
+		};
 	}
 
 }
