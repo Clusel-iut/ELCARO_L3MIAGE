@@ -1,8 +1,6 @@
 package main;
 
-import recherche.Predicat;
 import recherche.Projection;
-import recherche.Selection;
 import stockage.Attribut;
 import stockage.Relation;
 import stockage.Schema;

@@ -1,14 +1,14 @@
 package stockage;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-
-import stockage.type.Type;
 
 public class Tuple implements Iterable<Object> {
+
+	@Override
+	public String toString() {
+		return "Tuple [valeurs=" + Arrays.toString(valeurs) + "]";
+	}
 
 	private final Object[] valeurs;
 

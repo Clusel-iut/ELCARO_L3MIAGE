@@ -9,7 +9,6 @@ import stockage.Tuple;
 import stockage.memory.MemoryDonneesRelation;
 import stockage.type.TypeBoolean;
 import stockage.type.TypeInteger;
-import stockage.type.StringBuff;
 
 public class TestSelectionIntBool {
 
