@@ -3,7 +3,6 @@ package recherche;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import stockage.Attribut;
 import stockage.Relation;
 import stockage.Schema;
 import stockage.StateLessRelation;
@@ -27,7 +26,6 @@ public class Produit extends StateLessRelation {
 			private Iterator<Tuple> iterator1 = rel1.iterator();
 			private Iterator<Tuple> iterator2 = rel2.iterator();
 			private Tuple nextTuple;
-			private boolean parcoursIterator1 = iterator1.hasNext();
 
 			@Override
 			public boolean hasNext() {

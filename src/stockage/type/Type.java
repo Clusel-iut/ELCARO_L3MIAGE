@@ -13,10 +13,14 @@ public abstract class Type<T extends Comparable<T>> {
 	public abstract T read(DataInputStream is) throws IOException;
 
 	public abstract T parse(String data);
-	
+
 	@Override
-	public String toString(){
-		return nomType; 
+	public String toString() {
+		return nomType;
+	}
+
+	public void write(DataOutputStream osTuples, Object obj) {
+		write(osTuples, (Type<?>) obj);
 	}
 
 }
