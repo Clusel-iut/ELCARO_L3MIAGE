@@ -1,26 +1,247 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  static = true;}PARSER_BEGIN(Expression)package recherche;
+ */
+options
+{
+  static = true;
+}
 
-abstract class Expr {
-  public abstract int eval();
-}
-class Plus extends Expr {
-  private Expr op1, op2;
-  public Plus(Expr op1, Expr op2) {this.op1=op1; this.op2=op2; }
-  public int eval() {  return op1.eval()+op2.eval(); }
-}
-class Mult extends Expr {
-  private Expr op1, op2;
-  public Mult(Expr op1, Expr op2) {this.op1=op1; this.op2=op2; }
-  public int eval() {  return op1.eval()*op2.eval(); }
-}
-class Cste extends Expr {
-  private int v;
-  public Cste(int v) {this.v=v; }
-  public int eval() {  return v; }
-}
-enum Operateur { PLUS { }, MOINS, MULT, DIV;
-public Expr constr(Expr e1, Expr e2); }
+PARSER_BEGIN(Expression)
+package recherche;
+import stockage.*;
+import stockage.memory.*;
+import stockage.type.*;
+import java.util.ArrayList;
 
-public class Expression{  public static void main(String args []) throws ParseException  {    Expression parser = new Expression(System.in);    while (true)    {      System.out.println("Reading from standard input...");      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");      try      {		System.out.println(parser.sum().eval());      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        Expression.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(Expression)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}int one_line() :{}{  sum() ";"  {    return 0;  }| ";"  {    return 1;  }}Expr sum() :{Expr e1, e2;Operateur op;}{  e1=term()((< PLUS > { op = Operateur.PLUS;}| < MINUS >{ op = Operateur.MOINS;})e2=term(){e1=new Plus(e1,e2); })*{  return e1; }}Expr term() :{Expr e1, e2;}{  e1=unary() (( < MULTIPLY >| < DIVIDE >)e2=unary() {e1=new Mult(e1,e2); })* {  return e1; }}Expr unary() :{Expr e;}{  < MINUS > e=element(){  return new Cste(-e.eval()); }| e=element(){  return e; }}Expr element() :{Token t; Expr e;}{  t=< CONSTANT > {return new Cste(Integer.parseInt(t.image)); }| "(" e=sum() ")" {  return e; }}
+
+abstract class Requete
+{
+	public ArrayList<MemoryDonneesRelation> relations;
+	public abstract String toString();
+}
+
+class Proj extends Requete
+{
+	private Projection projection;
+
+	public Proj(ArrayList<Attribut> attributs, String from) {
+		Schema sch = new Schema(attributs);
+		MemoryDonneesRelation rel = null;
+		int i = 0;
+
+		while(rel == null && i < super.relations.size())
+		{
+			if(relations.get(i).getName() == from)
+			{
+			  	rel = relations.get(i);
+			}
+		}
+		
+		this.projection = new Projection(rel, sch);
+	}
+
+	public Projection getProjection()
+	{
+		return this.projection;
+	}
+
+	public String toString() {
+	  String s = "";
+	  for (Tuple t : this.projection) {
+			for (Object o : t)
+				s += (o + " - ");
+		}
+		return s;
+	}
+}
+
+class Create extends Requete
+{
+  MemoryDonneesRelation rel;
+	public Create(String nom, ArrayList<Attribut> attributs) {
+	  rel = new MemoryDonneesRelation(nom, new Schema(attributs));
+		relations.add(rel);
+	}
+
+	public String toString() {
+	  return "Table " + rel.getName() + " à bien été créée.";
+	}
+
+}
+
+
+
+public class Expression
+{
+  public static void main(String args []) throws ParseException
+  {
+    Expression parser = new Expression(System.in);
+    
+    /*Schema sc = new Schema(new Attribut(new TypeVarchar(),"nom"),new Attribut(new TypeVarchar(),"prenom"));
+
+    MemoryDonneesRelation r = new MemoryDonneesRelation("RELATION",sc);
+	r.addTuple(new Tuple(new StringBuff("MORAT"),new StringBuff("PHILIPPE")));
+	r.addTuple(new Tuple(new StringBuff("PIGNARD"),new StringBuff("FLORIAN")));
+	r.addTuple(new Tuple(new StringBuff("MONBEIG"),new StringBuff("JONATHAN")));
+	r.addTuple(new Tuple(new StringBuff("CLUSEL"),new StringBuff("MATHIEU")));*/
+	
+    while (true)
+    {
+      System.out.println("Reading from standard input...");
+      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");
+      try
+      {
+        // TEST AVEC : SELECT oui FROM non;
+        switch (Expression.one_line())
+        {
+          case 0 : 
+          System.out.println("OK.");
+          System.out.println(parser.start().toString());
+          
+          break;
+          case 1 : 
+          System.out.println("Goodbye.");
+          break;
+          default : 
+          break;
+        }
+      }
+      catch (Exception e)
+      {
+        System.out.println("NOK.");
+        System.out.println(e.getMessage());
+        Expression.ReInit(System.in);
+      }
+      catch (Error e)
+      {
+        System.out.println("Oops.");
+        System.out.println(e.getMessage());
+        break;
+      }
+
+    }
+  }
+}
+
+PARSER_END(Expression)
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
+TOKEN : /* OPERATORS */
+{
+  < PLUS : "+" >
+| < MINUS : "-" >
+| < MULTIPLY : "*" >
+| < DIVIDE : "/" >
+}
+
+TOKEN :
+{
+  < CONSTINT : (< DIGIT >)+ >
+| < CONSTCHAR : (< CHAR >)+ >
+| < #DIGIT : [ "0"-"9" ] >
+| < #CHAR : [ "a"-"z" ] >
+| < #CHARMAJ : ["A"-"Z"] >
+}
+
+TOKEN :
+{
+  < CREATE : "CREATE TABLE" > //CTCMD pour Create Table Commande
+|  < VALUES : "VALUES" > // A FAIRE A FAIRE A FAIRE A FAIRE A FAIRE A FAIRE
+| < SELECT : "SELECT" >
+| < UPDATE : "UPDATE" >
+| < DELETE : "DELETE" >
+| < FROM : "FROM" >
+| < WHERE : "WHERE" >
+| < AND : "AND" >
+| < OR : "OR" >
+| < GROUPBY : "GROUP BY" >
+| < HAVING : "HAVING" >
+| < OBRA : 	"(" >
+| < CBRA : ")" >
+| < COMA : "," >
+| < VARCHAR : "Varchar" >
+| < INT : "Integer" >
+| < BOOL : "Boolean" >
+| < DOUBLE : "Double" >
+}
+
+int one_line() :
+{}
+{
+  start() ";"
+  {
+    return 0;
+  }
+| ";"
+  {
+    return 1;
+  }
+}
+
+Requete start() :
+{Token t;
+Requete r;}
+{
+    (
+      t = < SELECT > r = projection()
+    | t = < CREATE > r = creation()
+    )
+    { System.out.println(r.toString());
+    return  r; } 
+  
+}
+Create creation():
+{
+  Token t;
+  String name;
+  ArrayList<Attribut> attributs = new ArrayList<Attribut>();
+}
+{
+	name = nextConstChar()
+	(	  (
+	    t = < OBRA >
+	  | t = < VARCHAR > { attributs.add(new Attribut(new TypeVarchar(), nextConstChar())); }
+	  | t = < INT > {attributs.add(new Attribut(new TypeInteger(), nextConstChar())); }
+	  | t = < BOOL > {attributs.add(new Attribut(new TypeBoolean(), nextConstChar())); }
+	  | t = < DOUBLE > {attributs.add(new Attribut(new TypeDouble(), nextConstChar())); }
+	  | t = < CBRA > 	  )
+	)*
+	{ return new Create(name, attributs); }
+	  
+}
+Proj projection() : 
+{
+  	String from = "";
+	ArrayList<Attribut> attributs = new ArrayList<Attribut>();
+	Token t;
+	Proj p ;
+}
+{
+ 	(
+ 	  (
+ 	    t = < CONSTCHAR > {attributs.add(new Attribut(new TypeVarchar(), t.image));}
+ 	  | t = < COMA > {}
+ 	  | t = < FROM > { from=nextConstChar(); }
+ 	  )
+ 	)*
+ 	
+ 	{p = new Proj(attributs, from);
+ 	return p;}
+ 	
+}
+
+String nextConstChar():
+{ Token t; }
+{ t = < CONSTCHAR >
+	{System.out.println(t.image);
+	  return t.image; }
+}
+
+

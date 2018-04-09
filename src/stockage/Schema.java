@@ -24,6 +24,11 @@ public class Schema implements Iterable<Attribut> {
 	public Schema(Attribut... attributs) {
 		this.attributs = attributs;
 	}
+	
+	public Schema(ArrayList<Attribut> attributs) {
+		this.attributs = new Attribut[attributs.size()];
+		attributs.toArray(this.attributs);
+	}
 
 	public Schema(Schema schema1, Schema schema2) {
 		ArrayList<Attribut> list = new ArrayList<Attribut>();
