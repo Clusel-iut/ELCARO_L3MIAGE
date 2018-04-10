@@ -3,8 +3,13 @@
  */
 
 /* CREATE TABLE personne(Varchar nom, Varchar prenom, Integer age);
-	INSERT INTO personne (gourat, sebastien, 22), (clusel, mathieu, 20), (monbeig, jonathan, 20);
+	INSERT INTO personne ('gourat', 'sebastien', 22), ('clusel', 'mathieu', 20), ('monbeig', 'jonathan', 20);
 	SELECT nom FROM personne;
+	SELECT nom FROM personne WHERE nom = 'gourat';
+	SELECT prenom FROM personne WHERE nom = 'clusel';
+	SELECT prenom FROM personne WHERE age = 22;
+	SELECT prenom FROM personne WHERE age > 20;
+	SELECT prenom FROM personne WHERE age < 21;
 */
 options
 {
@@ -33,7 +38,12 @@ class Proj extends Requete
 	public Proj(ArrayList<Attribut> attributs, String from) {
 		Schema sch = new Schema(attributs);
 		Relation rel = null;
-		rel = bdd.getRelations().get(bdd.getIndexRelation(from));
+		rel = Requete.bdd.getRelations().get(Requete.bdd.getIndexRelation(from));
+		this.projection = new Projection(rel, sch);
+	}
+
+	public Proj(ArrayList<Attribut> attributs, Relation rel) {
+		Schema sch = new Schema(attributs);
 		this.projection = new Projection(rel, sch);
 	}
 
@@ -52,17 +62,11 @@ class Create extends Requete
   	MemoryDonneesRelation rel;
 	public Create(String nom, ArrayList<Attribut> attributs) {
 	  rel = new MemoryDonneesRelation(nom, new Schema(attributs));
-		bdd.addRelations(rel);
+		Requete.bdd.addRelations(rel);
 	}
 
 	public String toString() {
-	  String s = "Table " + rel.getName() + " à bien été créée.\n";
-	  for(int i = 0; i < rel.getSchema().getAttributs().length; i++)
-	  {
-	    	s += "( " + rel.getSchema().getAttributs()[i].getNomOfAttribut() + " : " + rel.getSchema().getAttributs()[i].getTypeOfAttribut() + " )\n";
-	  }
-
-	  return s;
+	  return rel.toString();
 	}
 
 }
@@ -71,8 +75,8 @@ class Insert extends Requete
 {
   	MemoryDonneesRelation rel;
 	public Insert(String from, ArrayList<ArrayList<Object>> values) {
-	    int indexRel = bdd.getIndexRelation(from);
-	    this.rel = (MemoryDonneesRelation)bdd.getRelations().get(indexRel);
+	    int indexRel = Requete.bdd.getIndexRelation(from);
+	    this.rel = (MemoryDonneesRelation)Requete.bdd.getRelations().get(indexRel);
 		for(int j = 0; j < values.size(); j++)
 		{
 			rel.addTuple(new Tuple(values.get(j)));
@@ -145,19 +149,24 @@ SKIP :
 | "\r"
 | "\t"
 | "\n"
+| "'" 
 }
 
 TOKEN : /* OPERATORS */
 {
-  < PLUS : "+" >
-| < MINUS : "-" >
+ < OPERATOR : (< PLUS >|< MINUS >|< EQUAL >|< INF >|< SUP >) >
+| < #EQUAL : "=" >
+| < #PLUS : "+" >
+| < #MINUS : "-" >
+| < #INF : "<" >
+| < #SUP : ">" >
 | < MULTIPLY : "*" >
 | < DIVIDE : "/" >
 }
 
 TOKEN :
 {
-  < CONSTINT : (< DIGIT >)+ >
+ < CONSTINT : (< DIGIT >)+ >
 | < CONSTCHAR : (< CHAR >)+ >
 | < CONSTBOOL : (< TRUE >|< FALSE >) >
 | < CONSTDOUBLE : (< DOUBLEE >)+ >
@@ -190,6 +199,8 @@ TOKEN :
 | < INT : "Integer" >
 | < BOOL : "Boolean" >
 | < DOUBLE : "Double" >
+
+
 }
 
 int one_line() :
@@ -209,15 +220,52 @@ void start() :
 {Token t;
 Requete r;}
 {
-    (
-      t = < SELECT > r = projection()
-    | t = < CREATE > r = creation()
-    | t = < INSERT > r = insertion()
+	(
+	      t = < SELECT > r = projection()
+	    | t = < CREATE > r = creation()
+	    | t = < INSERT > r = insertion()
     )
     {System.out.print(r.toString());} 
   
 }
 
+Proj selection(ArrayList<Attribut> attributs, String from):
+{
+Token t;
+Relation r = Requete.bdd.getRelations().get(Requete.bdd.getIndexRelation(from));
+Proj p = null;
+String attr = "";
+Object value = new Object();
+String operateur = "";
+}
+{
+  (
+    (
+      
+       t = < CONSTCHAR > { attr = t.image; }
+      | t = < OPERATOR > { operateur = t.image;
+      					value = nextConstGlobal();
+      					try {
+      						r = new Selection(r, Predicat.createPredicat(r.getSchema().getIndex(attr), value, operateur));
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+      					 }
+      | t = < AND > { selection(attributs, from);
+      					}
+    )
+   )*
+     {
+		try {
+		  p = new Proj(attributs, r);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+       return  p;
+       }
+}
 Insert insertion():
 {
   Token t;
@@ -300,7 +348,7 @@ Proj projection() :
   	String from = "";
 	ArrayList<Attribut> attributs = new ArrayList<Attribut>();
 	Token t;
-	Proj p ;
+	Proj p = null;
 }
 {
  	(
@@ -308,16 +356,27 @@ Proj projection() :
  	    t = < CONSTCHAR > {attributs.add(new Attribut(new TypeVarchar(), t.image));}
  	  | t = < COMA > {}
  	  | t = < FROM > { from=nextConstChar(); }
+ 	  | t = < WHERE > { return selection(attributs, from); }
  	  )
  	)*
- 	
- 	{p = new Proj(attributs, from);
- 	return p;}
- 	
+ 	{ return new Proj(attributs, from); }	
 }
 
 String nextConstChar():
 { Token t; }
 { t = < CONSTCHAR >
 	{ return t.image; }
+}
+
+Object nextConstGlobal():
+{ Token t;
+  Object value = new Object(); }
+{
+  (
+       t = < CONSTCHAR > { value = t.image; }
+	  | t = < CONSTINT > { value = Integer.parseInt(t.image); }
+	  | t = < CONSTBOOL > { value = Boolean.parseBoolean(t.image); }
+	  | t = < CONSTDOUBLE > { value = Double.parseDouble(t.image); }
+  )
+	{ return value; }
 }

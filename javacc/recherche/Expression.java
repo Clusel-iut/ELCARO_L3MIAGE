@@ -20,7 +20,12 @@ class Proj extends Requete
         public Proj(ArrayList<Attribut> attributs, String from) {
                 Schema sch = new Schema(attributs);
                 Relation rel = null;
-                rel = bdd.getRelations().get(bdd.getIndexRelation(from));
+                rel = Requete.bdd.getRelations().get(Requete.bdd.getIndexRelation(from));
+                this.projection = new Projection(rel, sch);
+        }
+
+        public Proj(ArrayList<Attribut> attributs, Relation rel) {
+                Schema sch = new Schema(attributs);
                 this.projection = new Projection(rel, sch);
         }
 
@@ -39,17 +44,11 @@ class Create extends Requete
         MemoryDonneesRelation rel;
         public Create(String nom, ArrayList<Attribut> attributs) {
           rel = new MemoryDonneesRelation(nom, new Schema(attributs));
-                bdd.addRelations(rel);
+                Requete.bdd.addRelations(rel);
         }
 
         public String toString() {
-          String s = "Table " + rel.getName() + " \u00e0 bien \u00e9t\u00e9 cr\u00e9\u00e9e.\u005cn";
-          for(int i = 0; i < rel.getSchema().getAttributs().length; i++)
-          {
-                s += "( " + rel.getSchema().getAttributs()[i].getNomOfAttribut() + " : " + rel.getSchema().getAttributs()[i].getTypeOfAttribut() + " )\u005cn";
-          }
-
-          return s;
+          return rel.toString();
         }
 
 }
@@ -58,8 +57,8 @@ class Insert extends Requete
 {
         MemoryDonneesRelation rel;
         public Insert(String from, ArrayList<ArrayList<Object>> values) {
-            int indexRel = bdd.getIndexRelation(from);
-            this.rel = (MemoryDonneesRelation)bdd.getRelations().get(indexRel);
+            int indexRel = Requete.bdd.getIndexRelation(from);
+            this.rel = (MemoryDonneesRelation)Requete.bdd.getRelations().get(indexRel);
                 for(int j = 0; j < values.size(); j++)
                 {
                         rel.addTuple(new Tuple(values.get(j)));
@@ -128,11 +127,11 @@ public class Expression implements ExpressionConstants {
     case INSERT:
     case SELECT:
       start();
-      jj_consume_token(38);
+      jj_consume_token(43);
     {if (true) return 0;}
       break;
-    case 38:
-      jj_consume_token(38);
+    case 43:
+      jj_consume_token(43);
     {if (true) return 1;}
       break;
     default:
@@ -167,12 +166,67 @@ Requete r;
      System.out.print(r.toString());
   }
 
+  static final public Proj selection(ArrayList<Attribut> attributs, String from) throws ParseException {
+Token t;
+Relation r = Requete.bdd.getRelations().get(Requete.bdd.getIndexRelation(from));
+Proj p = null;
+String attr = "";
+Object value = new Object();
+String operateur = "";
+    label_1:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case OPERATOR:
+      case CONSTCHAR:
+      case AND:
+        ;
+        break;
+      default:
+        jj_la1[2] = jj_gen;
+        break label_1;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case CONSTCHAR:
+        t = jj_consume_token(CONSTCHAR);
+                           attr = t.image;
+        break;
+      case OPERATOR:
+        t = jj_consume_token(OPERATOR);
+                           operateur = t.image;
+                                        value = nextConstGlobal();
+                                        try {
+                                                r = new Selection(r, Predicat.createPredicat(r.getSchema().getIndex(attr), value, operateur));
+                                                } catch (Exception e)
+                                                {
+                                                        e.printStackTrace();
+                                                }
+        break;
+      case AND:
+        t = jj_consume_token(AND);
+                      selection(attributs, from);
+        break;
+      default:
+        jj_la1[3] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+                try {
+                  p = new Proj(attributs, r);
+                } catch (Exception e)
+                {
+                        e.printStackTrace();
+                }
+       {if (true) return  p;}
+    throw new Error("Missing return statement in function");
+  }
+
   static final public Insert insertion() throws ParseException {
   Token t;
   String name;
   ArrayList<ArrayList<Object>> values = new ArrayList<ArrayList<Object>>();
     name = nextConstChar();
-    label_1:
+    label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case VALUES:
@@ -182,8 +236,8 @@ Requete r;
         ;
         break;
       default:
-        jj_la1[2] = jj_gen;
-        break label_1;
+        jj_la1[4] = jj_gen;
+        break label_2;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case VALUES:
@@ -202,7 +256,7 @@ Requete r;
 
         break;
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[5] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -215,15 +269,15 @@ Requete r;
   Token t;
         ArrayList<Object> lineValues = new ArrayList<Object>();
     lineValues.add(valeur());
-    label_2:
+    label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMA:
         ;
         break;
       default:
-        jj_la1[4] = jj_gen;
-        break label_2;
+        jj_la1[6] = jj_gen;
+        break label_3;
       }
       t = jj_consume_token(COMA);
                            lineValues.add(valeur());
@@ -253,7 +307,7 @@ Requete r;
                                   value = Double.parseDouble(t.image);
       break;
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[7] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -266,7 +320,7 @@ Requete r;
   String name;
   ArrayList<Attribut> attributs = new ArrayList<Attribut>();
     name = nextConstChar();
-    label_3:
+    label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OBRA:
@@ -279,8 +333,8 @@ Requete r;
         ;
         break;
       default:
-        jj_la1[6] = jj_gen;
-        break label_3;
+        jj_la1[8] = jj_gen;
+        break label_4;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OBRA:
@@ -311,7 +365,7 @@ Requete r;
 
         break;
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[9] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -324,18 +378,19 @@ Requete r;
         String from = "";
         ArrayList<Attribut> attributs = new ArrayList<Attribut>();
         Token t;
-        Proj p ;
-    label_4:
+        Proj p = null;
+    label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CONSTCHAR:
       case FROM:
+      case WHERE:
       case COMA:
         ;
         break;
       default:
-        jj_la1[8] = jj_gen;
-        break label_4;
+        jj_la1[10] = jj_gen;
+        break label_5;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CONSTCHAR:
@@ -350,14 +405,17 @@ Requete r;
         t = jj_consume_token(FROM);
                            from=nextConstChar();
         break;
+      case WHERE:
+        t = jj_consume_token(WHERE);
+                            {if (true) return selection(attributs, from);}
+        break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
     }
-         p = new Proj(attributs, from);
-        {if (true) return p;}
+          {if (true) return new Proj(attributs, from);}
     throw new Error("Missing return statement in function");
   }
 
@@ -365,6 +423,35 @@ Requete r;
   Token t;
     t = jj_consume_token(CONSTCHAR);
           {if (true) return t.image;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Object nextConstGlobal() throws ParseException {
+  Token t;
+  Object value = new Object();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case CONSTCHAR:
+      t = jj_consume_token(CONSTCHAR);
+                           value = t.image;
+      break;
+    case CONSTINT:
+      t = jj_consume_token(CONSTINT);
+                               value = Integer.parseInt(t.image);
+      break;
+    case CONSTBOOL:
+      t = jj_consume_token(CONSTBOOL);
+                                value = Boolean.parseBoolean(t.image);
+      break;
+    case CONSTDOUBLE:
+      t = jj_consume_token(CONSTDOUBLE);
+                                  value = Double.parseDouble(t.image);
+      break;
+    default:
+      jj_la1[12] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+          {if (true) return value;}
     throw new Error("Missing return statement in function");
   }
 
@@ -378,7 +465,7 @@ Requete r;
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[10];
+  static final private int[] jj_la1 = new int[13];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -386,10 +473,10 @@ Requete r;
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x580000,0x580000,0x80200000,0x80200000,0x0,0x1e00,0x80000000,0x80000000,0x2000400,0x2000400,};
+      jj_la1_0 = new int[] {0xb000000,0xb000000,0x8040,0x8040,0x4000000,0x4000000,0x0,0x3c000,0x0,0x0,0xc0008000,0xc0008000,0x3c000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x40,0x0,0x3,0x3,0x2,0x0,0x3f,0x3f,0x2,0x2,};
+      jj_la1_1 = new int[] {0x800,0x0,0x1,0x1,0x70,0x70,0x40,0x0,0x7f0,0x7f0,0x40,0x40,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -410,7 +497,7 @@ Requete r;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -424,7 +511,7 @@ Requete r;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -441,7 +528,7 @@ Requete r;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -451,7 +538,7 @@ Requete r;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -467,7 +554,7 @@ Requete r;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -476,7 +563,7 @@ Requete r;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -527,12 +614,12 @@ Requete r;
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[39];
+    boolean[] la1tokens = new boolean[44];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 13; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -544,7 +631,7 @@ Requete r;
         }
       }
     }
-    for (int i = 0; i < 39; i++) {
+    for (int i = 0; i < 44; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

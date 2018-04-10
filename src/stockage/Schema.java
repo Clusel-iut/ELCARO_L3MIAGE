@@ -88,5 +88,18 @@ public class Schema implements Iterable<Attribut> {
 		}
 		return sb.toString();
 	}
+	
+	public int getIndex(String attr) throws Exception {
+		int indexAttr = -1;
+
+		for (int i = 0; i < this.attributs.length; i++)
+		{
+			if(attr.equals(this.attributs[i].getNomOfAttribut()))
+			{
+				indexAttr = i;
+			}
+		}
+		return indexAttr;
+	}
 
 }
