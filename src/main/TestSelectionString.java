@@ -1,8 +1,11 @@
 package main;
 
+import java.util.ArrayList;
+
 import recherche.Predicat;
 import recherche.Selection;
 import stockage.Attribut;
+import stockage.BD;
 import stockage.Relation;
 import stockage.Schema;
 import stockage.Tuple;
@@ -21,36 +24,22 @@ public class TestSelectionString {
 		r.addTuple(new Tuple(new StringBuff("MONBEIG"), new StringBuff("JONATHAN")));
 		r.addTuple(new Tuple(new StringBuff("CLUSEL"), new StringBuff("MATHIEU")));
 
-		System.out.println(r.getName());
-		for (Attribut att : sc) {
-			System.out.println(att.toString());
-		}
-		for (Tuple t : r) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		ArrayList<Relation> ar = new ArrayList<Relation>();
+		ar.add(r);
+		BD bd = new BD(ar);
+		System.out.print(bd.toString());
 
-		System.out.println("Selection des noms suppérieur à 6");
+		System.out.println("\nSelection des noms suppérieur à 6");
 		Relation s = new Selection(r, new Predicat() {
 			@Override
 			public boolean eval(Tuple tuple) {
 				return ((StringBuff) tuple.getValue(0)).sb.toString().length() > 6;
 			}
 		});
-		for (Tuple t1 : s) {
-			for (Object o1 : t1)
-				System.out.print(o1 + " ");
-			System.out.println();
-		}
+		System.out.println(s.toString());
 
-		System.out.println("Suppression d'un tuple");
+		System.out.println("\nSuppression d'un tuple");
 		r.deleteTuple(new Tuple(new StringBuff("MORAT"), new StringBuff("PHILIPPE")));
-		for (Tuple t : r) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		System.out.print(bd.toString());
 	}
-
 }

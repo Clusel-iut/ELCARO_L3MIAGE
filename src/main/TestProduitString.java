@@ -1,7 +1,10 @@
 package main;
 
+import java.util.ArrayList;
+
 import recherche.Produit;
 import stockage.Attribut;
+import stockage.BD;
 import stockage.Relation;
 import stockage.Schema;
 import stockage.Tuple;
@@ -29,33 +32,15 @@ public class TestProduitString {
 		r2.addTuple(new Tuple(new Integer(19), new StringBuff("ETUDIANT")));
 		r2.addTuple(new Tuple(new Integer(20), new StringBuff("ETUDIANT")));
 
-		System.out.println(r1.getName());
-		for (Attribut att : sc1) {
-			System.out.println(att.toString());
-		}
-		for (Tuple t : r1) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		ArrayList<Relation> ar = new ArrayList<Relation>();
+		ar.add(r1);
+		ar.add(r2);
+		BD bd = new BD(ar);
+		System.out.print(bd.toString());
 
-		System.out.println(r2.getName());
-		for (Attribut att : sc2) {
-			System.out.println(att.toString());
-		}
-		for (Tuple t : r2) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
-
-		System.out.println("Produit entre les deux tables");
+		System.out.println("\nProduit entre les deux tables");
 		Relation s = new Produit(r1, r2);
-		for (Tuple t : s) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		System.out.println(s.toString());
 	}
 
 }

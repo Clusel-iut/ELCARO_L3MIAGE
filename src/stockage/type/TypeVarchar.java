@@ -12,9 +12,8 @@ public class TypeVarchar extends Type<StringBuff> {
 	}
 
 	@Override
-	public void write(DataOutputStream os, StringBuff valeur) throws IOException {
+	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
 		os.writeUTF(valeur.toString()); //TODO CHANGE
-
 	}
 
 	@Override
@@ -25,6 +24,11 @@ public class TypeVarchar extends Type<StringBuff> {
 	@Override
 	public StringBuff parse(String data) {
 		return new StringBuff(data);
+	}
+
+	@Override
+	public Class<? extends Comparable<?>> getType() {
+		return StringBuff.class;
 	}
 
 }

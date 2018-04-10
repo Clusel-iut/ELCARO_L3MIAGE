@@ -1,14 +1,11 @@
 package stockage;
 
-import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,16 +41,6 @@ public class Schema implements Iterable<Attribut> {
 		this.attributs = new Attribut[longSch];
 		list.toArray(this.attributs);
 	}
-
-	// public Schema(String fileName) throws FileNotFoundException {
-	// Schema schema = null;
-	// XMLDecoder decoder = new XMLDecoder(new FileInputStream(fileName));
-	// try {
-	// this.attributs = ((Schema) decoder.readObject()).attributs;
-	// } finally {
-	// decoder.close();
-	// }
-	// }
 
 	public void saveSchema(String fileName) throws FileNotFoundException {
 		XMLEncoder encoder = new XMLEncoder(new FileOutputStream(fileName));
@@ -91,6 +78,15 @@ public class Schema implements Iterable<Attribut> {
 			tuple.add(new Attribut((Type<?>) a.getTypeOfAttribut().read(is), a.getNomOfAttribut()));
 		}
 		return new Tuple(tuple);
+	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for(Attribut a: this.attributs) {
+			sb.append(a.toString());
+			sb.append("\t");
+		}
+		return sb.toString();
 	}
 
 }

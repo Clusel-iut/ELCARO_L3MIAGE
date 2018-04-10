@@ -1,7 +1,10 @@
 package main;
 
+import java.util.ArrayList;
+
 import recherche.Projection;
 import stockage.Attribut;
+import stockage.BD;
 import stockage.Relation;
 import stockage.Schema;
 import stockage.Tuple;
@@ -20,31 +23,18 @@ public class TestProjectionString {
 		r.addTuple(new Tuple(new StringBuff("MONBEIG"), new StringBuff("JONATHAN")));
 		r.addTuple(new Tuple(new StringBuff("CLUSEL"), new StringBuff("MATHIEU")));
 
-		System.out.println(r.getName());
-		for (Attribut att : sc) {
-			System.out.println(att.toString());
-		}
-		for (Tuple t : r) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		ArrayList<Relation> ar = new ArrayList<Relation>();
+		ar.add(r);
+		BD bd = new BD(ar);
+		System.out.print(bd.toString());
 
-		System.out.println("Projection sur les noms");
+		System.out.println("\nProjection sur les noms");
 		Relation s = new Projection(r, new Schema(new Attribut(new TypeVarchar(), "NOM")));
-		for (Tuple t : s) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		System.out.println(s.toString());
 
-		System.out.println("Suppression d'un tuple");
+		System.out.println("\nSuppression d'un tuple");
 		r.deleteTuple(new Tuple(new StringBuff("MORAT"), new StringBuff("PHILIPPE")));
-		for (Tuple t : r) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		System.out.print(bd.toString());
 	}
 
 }

@@ -1,8 +1,11 @@
 package main;
 
+import java.util.ArrayList;
+
 import recherche.Predicat;
 import recherche.Selection;
 import stockage.Attribut;
+import stockage.BD;
 import stockage.Relation;
 import stockage.Schema;
 import stockage.Tuple;
@@ -22,39 +25,28 @@ public class TestSelectionIntBool {
 		r.addTuple(new Tuple(new Integer(10), new Boolean(true)));
 		r.addTuple(new Tuple(new Integer(416), new Boolean(true)));
 
-		System.out.println(r.getName());
-		for (Attribut att : sc) {
-			System.out.println(att.toString());
-		}
+		ArrayList<Relation> ar = new ArrayList<Relation>();
+		ar.add(r);
+		BD bd = new BD(ar);
+		System.out.print(bd.toString());
 		
-		for (Tuple t : r) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		System.out.println("\nSelection des entier superieur à 400");
 		Relation s1 = new Selection(r, new Predicat() {
 			@Override
 			public boolean eval(Tuple tuple) {
 				return ((Integer) tuple.getValue(0) > 400);
 			}
 		});
-		for (Tuple t : s1) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		System.out.println(s1.toString());
+		
+		System.out.println("\nSelection des nombres");
 		Relation s2 = new Selection(r, new Predicat() {
 			@Override
 			public boolean eval(Tuple tuple) {
 				return tuple.getValue(1).equals(new Boolean(false));
 			}
 		});
-		
-		for (Tuple t : s2) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		System.out.println(s2.toString());
 	}
 
 }

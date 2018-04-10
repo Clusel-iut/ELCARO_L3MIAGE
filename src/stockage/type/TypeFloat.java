@@ -12,8 +12,8 @@ public class TypeFloat extends Type<Float> {
 	}
 	
 	@Override
-	public void write(DataOutputStream os, Float valeur) throws IOException {
-		os.writeFloat(valeur);
+	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
+		os.writeFloat((float) valeur);
 		
 	}
 
@@ -25,6 +25,11 @@ public class TypeFloat extends Type<Float> {
 	@Override
 	public Float parse(String data) {
 		return new Float(data);
+	}
+
+	@Override
+	public Class<? extends Comparable<?>> getType() {
+		return Float.class;
 	}
 
 	

@@ -12,8 +12,8 @@ public class TypeBoolean extends Type<Boolean> {
 	}
 
 	@Override
-	public void write(DataOutputStream os, Boolean valeur) throws IOException {
-		os.writeBoolean(valeur);		
+	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
+		os.writeBoolean((boolean) valeur);		
 	}
 
 	@Override
@@ -24,6 +24,11 @@ public class TypeBoolean extends Type<Boolean> {
 	@Override
 	public Boolean parse(String data) {
 		return new Boolean(data);
+	}
+
+	@Override
+	public Class<? extends Comparable<?>> getType() {
+		return Boolean.class;
 	}
 
 }

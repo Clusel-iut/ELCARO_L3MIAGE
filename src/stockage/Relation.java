@@ -1,5 +1,8 @@
 package stockage;
 
+import java.io.IOException;
+import java.util.Iterator;
+
 public abstract class Relation implements Iterable<Tuple> {
 
 	/** Nom de la table de base de donnée */
@@ -12,6 +15,10 @@ public abstract class Relation implements Iterable<Tuple> {
 		this.name = name;
 		this.schema = schema;
 	}
+
+	public abstract Iterator<Tuple> iterator();
+	
+	public abstract String toString();
 
 	public Schema getSchema() {
 		return this.schema;

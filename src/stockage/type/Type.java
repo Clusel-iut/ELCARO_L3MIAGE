@@ -8,7 +8,7 @@ public abstract class Type<T extends Comparable<T>> {
 
 	protected String nomType;
 
-	public abstract void write(DataOutputStream os, T valeur) throws IOException;
+	public abstract void write(DataOutputStream os, Comparable<?> valeur) throws IOException; // TODO Comparable<?> -> T
 
 	public abstract T read(DataInputStream is) throws IOException;
 
@@ -19,9 +19,6 @@ public abstract class Type<T extends Comparable<T>> {
 		return nomType;
 	}
 
-	public void write(DataOutputStream osTuples, Object obj) {
-		write(osTuples, (Type<?>) obj);
-	}
+	public abstract Class<? extends Comparable<?>> getType();
 
 }
-// Byte, Short, Integer, Long, Float, Double, Character, Boolean

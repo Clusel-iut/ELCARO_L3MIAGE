@@ -1,8 +1,11 @@
 package main;
 
+import java.util.ArrayList;
+
 import recherche.Intersection;
 import recherche.Predicat;
 import stockage.Attribut;
+import stockage.BD;
 import stockage.Relation;
 import stockage.Schema;
 import stockage.Tuple;
@@ -23,17 +26,12 @@ public class TestIntersectionString {
 		r.addTuple(new Tuple(new StringBuff("CLUSEL"), new StringBuff("MATHIEU")));
 		r.addTuple(new Tuple(new StringBuff("GOURAT"), new StringBuff("SEBASTIEN")));
 
-		System.out.println(r.getName());
-		for (Attribut att : sc) {
-			System.out.println(att.toString());
-		}
-		for (Tuple t : r) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		ArrayList<Relation> ar = new ArrayList<Relation>();
+		ar.add(r);
+		BD bd = new BD(ar);
+		System.out.print(bd.toString());
 
-		System.out.println("Selection des noms supérieur à 6 && prénom inférieur à 8");
+		System.out.println("\nSelection des noms supérieur à 6 && prénom inférieur à 8");
 		Relation s1 = new Intersection(r, new Predicat() {
 			@Override
 			public boolean eval(Tuple tuple) {
@@ -45,13 +43,9 @@ public class TestIntersectionString {
 				return ((StringBuff) tuple.getValue(1)).sb.toString().length() < 8;
 			}
 		});
-		for (Tuple t1 : s1) {
-			for (Object o1 : t1)
-				System.out.print(o1 + " ");
-			System.out.println();
-		}
-
-		System.out.println("Selection des noms qui commence par G && prénom qui commence par S");
+		System.out.println(s1.toString());
+		
+		System.out.println("\nSelection des noms qui commence par G && prénom qui commence par S");
 		Relation s2 = new Intersection(r, new Predicat() {
 			@Override
 			public boolean eval(Tuple tuple) {
@@ -63,19 +57,11 @@ public class TestIntersectionString {
 				return ((StringBuff) tuple.getValue(1)).sb.toString().startsWith("S");
 			}
 		});
-		for (Tuple t1 : s2) {
-			for (Object o1 : t1)
-				System.out.print(o1 + " ");
-			System.out.println();
-		}
+		System.out.println(s2.toString());
 		
-		System.out.println("Suppression d'un tuple");
+		System.out.println("\nSuppression d'un tuple");
 		r.deleteTuple(new Tuple(new StringBuff("MORAT"), new StringBuff("PHILIPPE")));
-		for (Tuple t : r) {
-			for (Object o : t)
-				System.out.print(o + " ");
-			System.out.println();
-		}
+		System.out.print(bd.toString());
 	}
 
 }

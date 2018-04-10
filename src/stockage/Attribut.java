@@ -15,7 +15,7 @@ public class Attribut {
 	/**
 	 * @return Type : retourne le type de l'attribut
 	 */
-	public Type<?> getTypeOfAttribut() {
+	public Type<? extends Comparable<?>> getTypeOfAttribut() {
 		return this.type;
 	}
 
@@ -25,7 +25,7 @@ public class Attribut {
 
 	@Override
 	public String toString() {
-		return "[" + nom + ", " + type.toString() + "]";
+		return nom + ":" + type.toString();
 	}
 
 }

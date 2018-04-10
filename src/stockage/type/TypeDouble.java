@@ -15,8 +15,8 @@ public class TypeDouble extends Type<Double> {
 	}
 	
 	@Override
-	public void write(DataOutputStream os, Double valeur) throws IOException {
-		os.writeDouble(valeur);
+	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
+		os.writeDouble((double) valeur);
 		
 	}
 
@@ -28,6 +28,11 @@ public class TypeDouble extends Type<Double> {
 	@Override
 	public Double parse(String data) {
 		return new Double(data);
+	}
+
+	@Override
+	public Class<? extends Comparable<?>> getType() {
+		return Double.class;
 	}
 
 

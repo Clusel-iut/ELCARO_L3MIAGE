@@ -10,11 +10,10 @@ public class TypeShort extends Type<Short> {
 		super();
 		this.nomType = "TypeShort";
 	}
-	
+
 	@Override
-	public void write(DataOutputStream os, Short valeur) throws IOException {
-		os.writeShort(valeur);
-		
+	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
+		os.writeShort((int) valeur);
 	}
 
 	@Override
@@ -27,6 +26,9 @@ public class TypeShort extends Type<Short> {
 		return new Short(data);
 	}
 
-	
+	@Override
+	public Class<? extends Comparable<?>> getType() {
+		return Short.class;
+	}
 
 }

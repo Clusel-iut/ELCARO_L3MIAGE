@@ -78,7 +78,7 @@ public class MemoryDonneesRelation extends StateFullRelation {
 					nbAttTrouv++;
 				} else {
 					nbAttTrouv = 0;
-					break; // il y en a au moins un pas pareil
+					break; // il y en a au moins un pas identique
 				}
 
 			}
@@ -87,6 +87,10 @@ public class MemoryDonneesRelation extends StateFullRelation {
 			}
 		}
 		return -1;
+	}
+
+	public int nbTuples() {
+		return tuples.size();
 	}
 
 }

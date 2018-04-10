@@ -12,8 +12,8 @@ public class TypeByte extends Type<Byte> {
 	}
 	
 	@Override
-	public void write(DataOutputStream os, Byte valeur) throws IOException {
-		os.writeByte(valeur);
+	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
+		os.writeByte((int) valeur);
 		
 	}
 
@@ -25,6 +25,11 @@ public class TypeByte extends Type<Byte> {
 	@Override
 	public Byte parse(String data) {
 		return new Byte(data);
+	}
+
+	@Override
+	public Class<? extends Comparable<?>> getType() {
+		return Byte.class;
 	}
 
 

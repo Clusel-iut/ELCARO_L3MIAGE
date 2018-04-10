@@ -5,13 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-import stockage.Attribut;
 import stockage.Schema;
 import stockage.StateFullRelation;
 import stockage.Tuple;
-import stockage.type.Type;
 
 public class FileDonneesRelation extends StateFullRelation {
 
@@ -26,7 +23,7 @@ public class FileDonneesRelation extends StateFullRelation {
 	 *            : contient les colonnes de la tables
 	 */
 	public FileDonneesRelation(String name, Schema schema, DataInputStream is, DataOutputStream os) {
-		super(name, schema);
+		super(name, schema); // TODO le schema n'ai pas dans le fichier
 		this.isTuples = is;
 		this.osTuples = os;
 	}
@@ -63,30 +60,27 @@ public class FileDonneesRelation extends StateFullRelation {
 	 * Permet d'ajouter le tuple à la fin du fichier.
 	 * 
 	 * @param tuple
+	 * @throws IOException
 	 */
-	public void addTuple(Tuple tuple) {
-		try {
-			isTuples.skipBytes(isTuples.available());
-			while (iterator().hasNext())
-				iterator().next();
+	public void addTuple(Tuple tuple) throws IOException {
+		isTuples.skipBytes(isTuples.available());
+		while (iterator().hasNext())
+			iterator().next();
 
-			for (Attribut a : getSchema()) {
-				for (Object obj : tuple) {
-					a.getTypeOfAttribut().write(osTuples, obj);
-				}
-			}
-			isTuples.reset();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		tuple.ecrireTuple(osTuples, getSchema());
+
+		isTuples.reset();
 	}
 
 	/**
-	 * Permet de supprimer le tuple de la table.
+	 * Permet de supprimer le tuple de la table. On le replace par un tuple
+	 * null.
 	 * 
 	 * @param tuple
+	 * @throws IOException
 	 */
-	public void deleteTuple(Tuple tuple) {
+	// TODO faire methode qui enlève les lignes totalement null
+	public void deleteTuple(Tuple tuple) throws IOException {
 		Tuple t = new Tuple();
 		while (iterator().hasNext()) {
 			t = iterator().next();
@@ -95,7 +89,20 @@ public class FileDonneesRelation extends StateFullRelation {
 		}
 
 		if (tuple.equals(t)) {
-			
+			ArrayList<Object> lo = new ArrayList<Object>();
+			for (int i = 0; i < getSchema().getAttributs().length; i++) {
+				lo.add(null);
+			}
+			new Tuple(lo).ecrireTuple(osTuples, getSchema());
 		}
+	}
+
+	public int nbTuples() {
+		try {
+			return isTuples.available() / getSchema().getAttributs().length;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }
