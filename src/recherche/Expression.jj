@@ -1,6 +1,10 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
  */
+
+/* CREATE TABLE personne(Varchar nom, Varchar prenom, Integer age);
+	INSERT INTO personne (gourat, sebastien, 22), (clusel, mathieu, 20), (monbeig, jonathan, 20);
+*/
 options
 {
   static = true;
@@ -16,7 +20,7 @@ import java.util.ArrayList;
 
 abstract class Requete
 {
-	public ArrayList<MemoryDonneesRelation> relations;
+  	public static BD bdd = new BD();
 	public abstract String toString();
 }
 
@@ -29,11 +33,15 @@ class Proj extends Requete
 		MemoryDonneesRelation rel = null;
 		int i = 0;
 
-		while(rel == null && i < super.relations.size())
+		while(rel == null && i < bdd.getRelations().size())
 		{
-			if(relations.get(i).getName() == from)
+			if(bdd.getRelations().get(i).getName() == from)
 			{
-			  	rel = relations.get(i);
+			  	rel = bdd.getRelations().get(i);
+			}
+			else
+			{
+			  i++;
 			}
 		}
 		
@@ -57,16 +65,56 @@ class Proj extends Requete
 
 class Create extends Requete
 {
-  MemoryDonneesRelation rel;
+  	MemoryDonneesRelation rel;
 	public Create(String nom, ArrayList<Attribut> attributs) {
 	  rel = new MemoryDonneesRelation(nom, new Schema(attributs));
-		relations.add(rel);
+		bdd.getRelations().add(rel);
 	}
 
 	public String toString() {
-	  return "Table " + rel.getName() + " à bien été créée.";
+	  String s = "Table " + rel.getName() + " à bien été créée.\n";
+	  for(int i = 0; i < rel.getSchema().getAttributs().length; i++)
+	  {
+	    	s += "( " + rel.getSchema().getAttributs()[i].getNomOfAttribut() + " : " + rel.getSchema().getAttributs()[i].getTypeOfAttribut() + " )\n";
+	  }
+
+	  return s;
 	}
 
+}
+
+class Insert extends Requete
+{
+  	private int indexRel;
+	public Insert(String from, ArrayList<ArrayList<Object>> values) {
+		int i = 0;
+		boolean find = false;
+		while(i < bdd.getRelations().size() && find == false)
+		{
+			if(bdd.getRelations().get(i).getName() == from)
+			{
+			  	find = true;
+			  	indexRel = i;
+			}
+			else
+			{
+			  i++;
+			}
+		}
+		for(int j = 0; j < values.size(); j++)
+		{
+			bdd.getRelations().get(i).addTuple(new Tuple(values.get(j)));
+		}
+	}
+
+	public String toString() {
+	  String s = "";
+	  for (Tuple t : bdd.getRelations().get(indexRel)) {
+			for (Object o : t)
+				s += t.toString();
+		}
+		return s;
+	}
 }
 
 
@@ -88,17 +136,15 @@ public class Expression
     while (true)
     {
       System.out.println("Reading from standard input...");
-      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");
+      System.out.print("Enter an expression :");
       try
       {
-        // TEST AVEC : SELECT oui FROM non;
         switch (Expression.one_line())
         {
-          case 0 : 
+          case 0 :
           System.out.println("OK.");
-          System.out.println(parser.start().toString());
-          
           break;
+          
           case 1 : 
           System.out.println("Goodbye.");
           break;
@@ -110,6 +156,7 @@ public class Expression
       {
         System.out.println("NOK.");
         System.out.println(e.getMessage());
+        e.printStackTrace();
         Expression.ReInit(System.in);
       }
       catch (Error e)
@@ -145,6 +192,11 @@ TOKEN :
 {
   < CONSTINT : (< DIGIT >)+ >
 | < CONSTCHAR : (< CHAR >)+ >
+| < CONSTBOOL : (< TRUE >|< FALSE >) >
+| < CONSTDOUBLE : (< DOUBLEE >)+ >
+| < #TRUE : "true" >
+| < #FALSE : "false" >
+| < #DOUBLEE : (< CONSTINT >(","(< CONSTINT >))) >
 | < #DIGIT : [ "0"-"9" ] >
 | < #CHAR : [ "a"-"z" ] >
 | < #CHARMAJ : ["A"-"Z"] >
@@ -153,7 +205,8 @@ TOKEN :
 TOKEN :
 {
   < CREATE : "CREATE TABLE" > //CTCMD pour Create Table Commande
-|  < VALUES : "VALUES" > // A FAIRE A FAIRE A FAIRE A FAIRE A FAIRE A FAIRE
+| < INSERT : "INSERT INTO" >
+| < VALUES : "VALUES" >
 | < SELECT : "SELECT" >
 | < UPDATE : "UPDATE" >
 | < DELETE : "DELETE" >
@@ -185,18 +238,74 @@ int one_line() :
   }
 }
 
-Requete start() :
+void start() :
 {Token t;
 Requete r;}
 {
     (
       t = < SELECT > r = projection()
     | t = < CREATE > r = creation()
+    | t = < INSERT > r = insertion()
     )
-    { System.out.println(r.toString());
-    return  r; } 
+    {System.out.print(r.toString());} 
   
 }
+
+Insert insertion():
+{
+  Token t;
+  String name;
+  ArrayList<ArrayList<Object>> values = new ArrayList<ArrayList<Object>>();
+}
+{
+	name = nextConstChar()
+	(
+	  (
+	    t = < VALUES >
+	  | t = < OBRA > { values.add(ligneValeur()); }
+	  | t = < CBRA > { }
+	  | t = < COMA > { }
+	  )
+	)*
+	{ return new Insert(name, values); }
+	  
+}
+
+ArrayList<Object> ligneValeur():
+{
+  Token t;
+  	ArrayList<Object> lineValues = new ArrayList<Object>();
+}
+{
+  { lineValues.add(valeur()); }
+	(
+	  (
+	    t = < COMA > { lineValues.add(valeur()); }
+	  )
+	)*
+	{ return lineValues; }
+	   
+}
+
+Object valeur():
+{
+  Token t;
+  	Object value = new Object();
+}
+{
+	(
+	  (
+	    t = < CONSTCHAR > { value = t.image; }
+	  | t = < CONSTINT > { value = Integer.parseInt(t.image); }
+	  | t = < CONSTBOOL > { value = Boolean.parseBoolean(t.image); }
+	  | t = < CONSTDOUBLE > { value = Double.parseDouble(t.image); }
+	  )
+	)
+	{
+  		return value;
+	}
+}
+
 Create creation():
 {
   Token t;
@@ -205,13 +314,16 @@ Create creation():
 }
 {
 	name = nextConstChar()
-	(	  (
+	(
+	  (
 	    t = < OBRA >
 	  | t = < VARCHAR > { attributs.add(new Attribut(new TypeVarchar(), nextConstChar())); }
 	  | t = < INT > {attributs.add(new Attribut(new TypeInteger(), nextConstChar())); }
 	  | t = < BOOL > {attributs.add(new Attribut(new TypeBoolean(), nextConstChar())); }
 	  | t = < DOUBLE > {attributs.add(new Attribut(new TypeDouble(), nextConstChar())); }
-	  | t = < CBRA > 	  )
+	  | t = < COMA > { }
+	  | t = < CBRA > { }
+	  )
 	)*
 	{ return new Create(name, attributs); }
 	  
@@ -240,8 +352,5 @@ Proj projection() :
 String nextConstChar():
 { Token t; }
 { t = < CONSTCHAR >
-	{System.out.println(t.image);
-	  return t.image; }
+	{ return t.image; }
 }
-
-
