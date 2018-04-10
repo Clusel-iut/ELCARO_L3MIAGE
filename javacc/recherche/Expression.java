@@ -169,7 +169,6 @@ Requete r;
   static final public Proj selection(ArrayList<Attribut> attributs, String from) throws ParseException {
 Token t;
 Relation r = Requete.bdd.getRelations().get(Requete.bdd.getIndexRelation(from));
-Proj p = null;
 String attr = "";
 Object value = new Object();
 String operateur = "";
@@ -203,7 +202,7 @@ String operateur = "";
         break;
       case AND:
         t = jj_consume_token(AND);
-                      selection(attributs, from);
+                      r = ANDSelection(attributs, r);
         break;
       default:
         jj_la1[3] = jj_gen;
@@ -211,13 +210,55 @@ String operateur = "";
         throw new ParseException();
       }
     }
-                try {
-                  p = new Proj(attributs, r);
-                } catch (Exception e)
-                {
-                        e.printStackTrace();
-                }
-       {if (true) return  p;}
+       {if (true) return new Proj(attributs, r);}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Selection ANDSelection(ArrayList<Attribut> attributs, Relation rel) throws ParseException {
+Token t;
+Selection r = null;
+String attr = "";
+Object value = new Object();
+String operateur = "";
+    label_2:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case OPERATOR:
+      case CONSTCHAR:
+      case AND:
+        ;
+        break;
+      default:
+        jj_la1[4] = jj_gen;
+        break label_2;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case CONSTCHAR:
+        t = jj_consume_token(CONSTCHAR);
+                           attr = t.image;
+        break;
+      case OPERATOR:
+        t = jj_consume_token(OPERATOR);
+                           operateur = t.image;
+                                        value = nextConstGlobal();
+                                        try {
+                                                r = new Selection(rel, Predicat.createPredicat(rel.getSchema().getIndex(attr), value, operateur));
+                                                } catch (Exception e)
+                                                {
+                                                        e.printStackTrace();
+                                                }
+        break;
+      case AND:
+        t = jj_consume_token(AND);
+                      r = ANDSelection(attributs, r);
+        break;
+      default:
+        jj_la1[5] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+       {if (true) return  r;}
     throw new Error("Missing return statement in function");
   }
 
@@ -226,7 +267,7 @@ String operateur = "";
   String name;
   ArrayList<ArrayList<Object>> values = new ArrayList<ArrayList<Object>>();
     name = nextConstChar();
-    label_2:
+    label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case VALUES:
@@ -236,8 +277,8 @@ String operateur = "";
         ;
         break;
       default:
-        jj_la1[4] = jj_gen;
-        break label_2;
+        jj_la1[6] = jj_gen;
+        break label_3;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case VALUES:
@@ -256,7 +297,7 @@ String operateur = "";
 
         break;
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[7] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -269,15 +310,15 @@ String operateur = "";
   Token t;
         ArrayList<Object> lineValues = new ArrayList<Object>();
     lineValues.add(valeur());
-    label_3:
+    label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMA:
         ;
         break;
       default:
-        jj_la1[6] = jj_gen;
-        break label_3;
+        jj_la1[8] = jj_gen;
+        break label_4;
       }
       t = jj_consume_token(COMA);
                            lineValues.add(valeur());
@@ -307,7 +348,7 @@ String operateur = "";
                                   value = Double.parseDouble(t.image);
       break;
     default:
-      jj_la1[7] = jj_gen;
+      jj_la1[9] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -320,7 +361,7 @@ String operateur = "";
   String name;
   ArrayList<Attribut> attributs = new ArrayList<Attribut>();
     name = nextConstChar();
-    label_4:
+    label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OBRA:
@@ -333,8 +374,8 @@ String operateur = "";
         ;
         break;
       default:
-        jj_la1[8] = jj_gen;
-        break label_4;
+        jj_la1[10] = jj_gen;
+        break label_5;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OBRA:
@@ -365,7 +406,7 @@ String operateur = "";
 
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -379,7 +420,7 @@ String operateur = "";
         ArrayList<Attribut> attributs = new ArrayList<Attribut>();
         Token t;
         Proj p = null;
-    label_5:
+    label_6:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CONSTCHAR:
@@ -389,8 +430,8 @@ String operateur = "";
         ;
         break;
       default:
-        jj_la1[10] = jj_gen;
-        break label_5;
+        jj_la1[12] = jj_gen;
+        break label_6;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CONSTCHAR:
@@ -410,7 +451,7 @@ String operateur = "";
                             {if (true) return selection(attributs, from);}
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[13] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -447,7 +488,7 @@ String operateur = "";
                                   value = Double.parseDouble(t.image);
       break;
     default:
-      jj_la1[12] = jj_gen;
+      jj_la1[14] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -465,7 +506,7 @@ String operateur = "";
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[13];
+  static final private int[] jj_la1 = new int[15];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -473,10 +514,10 @@ String operateur = "";
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xb000000,0xb000000,0x8040,0x8040,0x4000000,0x4000000,0x0,0x3c000,0x0,0x0,0xc0008000,0xc0008000,0x3c000,};
+      jj_la1_0 = new int[] {0xb000000,0xb000000,0x8040,0x8040,0x8040,0x8040,0x4000000,0x4000000,0x0,0x3c000,0x0,0x0,0xc0008000,0xc0008000,0x3c000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x800,0x0,0x1,0x1,0x70,0x70,0x40,0x0,0x7f0,0x7f0,0x40,0x40,0x0,};
+      jj_la1_1 = new int[] {0x800,0x0,0x1,0x1,0x1,0x1,0x70,0x70,0x40,0x0,0x7f0,0x7f0,0x40,0x40,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -497,7 +538,7 @@ String operateur = "";
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -511,7 +552,7 @@ String operateur = "";
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -528,7 +569,7 @@ String operateur = "";
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -538,7 +579,7 @@ String operateur = "";
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -554,7 +595,7 @@ String operateur = "";
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -563,7 +604,7 @@ String operateur = "";
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -619,7 +660,7 @@ String operateur = "";
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 13; i++) {
+    for (int i = 0; i < 15; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

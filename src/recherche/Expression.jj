@@ -10,6 +10,10 @@
 	SELECT prenom FROM personne WHERE age = 22;
 	SELECT prenom FROM personne WHERE age > 20;
 	SELECT prenom FROM personne WHERE age < 21;
+	SELECT prenom FROM personne WHERE age < 21 AND nom = 'gourat';
+	SELECT prenom FROM personne WHERE age < 23 AND nom = 'gourat';
+	SELECT prenom FROM personne WHERE age > 19 AND age < 21;
+	SELECT prenom, age FROM personne WHERE age > 19 AND age < 21 AND nom = 'clusel';
 */
 options
 {
@@ -233,7 +237,6 @@ Proj selection(ArrayList<Attribut> attributs, String from):
 {
 Token t;
 Relation r = Requete.bdd.getRelations().get(Requete.bdd.getIndexRelation(from));
-Proj p = null;
 String attr = "";
 Object value = new Object();
 String operateur = "";
@@ -252,19 +255,39 @@ String operateur = "";
 							e.printStackTrace();
 						}
       					 }
-      | t = < AND > { selection(attributs, from);
-      					}
+      | t = < AND > { r = ANDSelection(attributs, r); }
     )
    )*
      {
-		try {
-		  p = new Proj(attributs, r);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-       return  p;
+       return new Proj(attributs, r);
        }
+}
+Selection ANDSelection(ArrayList<Attribut> attributs, Relation rel):
+{
+Token t;
+Selection r = null;
+String attr = "";
+Object value = new Object();
+String operateur = "";
+}
+{
+  (
+    (
+      
+       t = < CONSTCHAR > { attr = t.image; }
+      | t = < OPERATOR > { operateur = t.image;
+      					value = nextConstGlobal();
+      					try {
+      						r = new Selection(rel, Predicat.createPredicat(rel.getSchema().getIndex(attr), value, operateur));
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+      			 }
+      | t = < AND > { r = ANDSelection(attributs, r); }
+    )
+   )*
+     { return  r; }
 }
 Insert insertion():
 {

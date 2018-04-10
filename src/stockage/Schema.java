@@ -18,6 +18,17 @@ public class Schema implements Iterable<Attribut> {
 	public Attribut[] getAttributs() {
 		return attributs;
 	}
+	
+	public ArrayList<Attribut> getAttributsToArray() {
+		ArrayList<Attribut> list = new ArrayList<Attribut>();
+		
+		for(int i = 0; i<this.attributs.length; i++)
+		{
+			list.add(this.attributs[i]);
+		}
+		
+		return list;
+	}
 
 	public Schema(Attribut... attributs) {
 		this.attributs = attributs;
