@@ -1,5 +1,6 @@
 package stockage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BD {
@@ -33,6 +34,26 @@ public class BD {
 			sb.append(r.toString());
 		}
 		return sb.toString();
+	}
+	
+	public int getIndexRelation(String from)
+	{
+		int indexRel = -1;
+		int i = 0;
+		boolean find = false;
+		while(i < this.relations.size() && find == false)
+		{
+			if(this.relations.get(i).getName().equals(from))
+			{
+			  	find = true;
+			  	indexRel = i;
+			}
+			else
+			{
+			  i++;
+			}
+		}
+		return indexRel;
 	}
 
 }

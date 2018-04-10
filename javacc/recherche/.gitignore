@@ -4,3 +4,8 @@
 /Token.java
 /TokenMgrError.java
 /ExpressionConstants.java
+/Expression.java
+/ExpressionTokenManager.java
+/MaNouvGrammaire.java
+/MaNouvGrammaireConstants.java
+/MaNouvGrammaireTokenManager.java

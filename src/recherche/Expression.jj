@@ -4,6 +4,7 @@
 
 /* CREATE TABLE personne(Varchar nom, Varchar prenom, Integer age);
 	INSERT INTO personne (gourat, sebastien, 22), (clusel, mathieu, 20), (monbeig, jonathan, 20);
+	SELECT nom FROM personne;
 */
 options
 {
@@ -20,31 +21,19 @@ import java.util.ArrayList;
 
 abstract class Requete
 {
-  	public static BD bdd = new BD();
+  	public static BD bdd = new BD(new ArrayList<Relation>());
 	public abstract String toString();
 }
 
 class Proj extends Requete
 {
-	private Projection projection;
+
+    private Projection projection;
 
 	public Proj(ArrayList<Attribut> attributs, String from) {
 		Schema sch = new Schema(attributs);
-		MemoryDonneesRelation rel = null;
-		int i = 0;
-
-		while(rel == null && i < bdd.getRelations().size())
-		{
-			if(bdd.getRelations().get(i).getName() == from)
-			{
-			  	rel = bdd.getRelations().get(i);
-			}
-			else
-			{
-			  i++;
-			}
-		}
-		
+		Relation rel = null;
+		rel = bdd.getRelations().get(bdd.getIndexRelation(from));
 		this.projection = new Projection(rel, sch);
 	}
 
@@ -54,12 +43,7 @@ class Proj extends Requete
 	}
 
 	public String toString() {
-	  String s = "";
-	  for (Tuple t : this.projection) {
-			for (Object o : t)
-				s += (o + " - ");
-		}
-		return s;
+	  return projection.toString();
 	}
 }
 
@@ -68,7 +52,7 @@ class Create extends Requete
   	MemoryDonneesRelation rel;
 	public Create(String nom, ArrayList<Attribut> attributs) {
 	  rel = new MemoryDonneesRelation(nom, new Schema(attributs));
-		bdd.getRelations().add(rel);
+		bdd.addRelations(rel);
 	}
 
 	public String toString() {
@@ -85,35 +69,18 @@ class Create extends Requete
 
 class Insert extends Requete
 {
-  	private int indexRel;
+  	MemoryDonneesRelation rel;
 	public Insert(String from, ArrayList<ArrayList<Object>> values) {
-		int i = 0;
-		boolean find = false;
-		while(i < bdd.getRelations().size() && find == false)
-		{
-			if(bdd.getRelations().get(i).getName() == from)
-			{
-			  	find = true;
-			  	indexRel = i;
-			}
-			else
-			{
-			  i++;
-			}
-		}
+	    int indexRel = bdd.getIndexRelation(from);
+	    this.rel = (MemoryDonneesRelation)bdd.getRelations().get(indexRel);
 		for(int j = 0; j < values.size(); j++)
 		{
-			bdd.getRelations().get(i).addTuple(new Tuple(values.get(j)));
+			rel.addTuple(new Tuple(values.get(j)));
 		}
 	}
 
 	public String toString() {
-	  String s = "";
-	  for (Tuple t : bdd.getRelations().get(indexRel)) {
-			for (Object o : t)
-				s += t.toString();
-		}
-		return s;
+	  	return rel.toString();
 	}
 }
 
@@ -142,11 +109,11 @@ public class Expression
         switch (Expression.one_line())
         {
           case 0 :
-          System.out.println("OK.");
+          System.out.println("\nOK.");
           break;
           
           case 1 : 
-          System.out.println("Goodbye.");
+          System.out.println("\nGoodbye.");
           break;
           default : 
           break;
@@ -154,14 +121,14 @@ public class Expression
       }
       catch (Exception e)
       {
-        System.out.println("NOK.");
+        System.out.println("\nNOK.");
         System.out.println(e.getMessage());
         e.printStackTrace();
         Expression.ReInit(System.in);
       }
       catch (Error e)
       {
-        System.out.println("Oops.");
+        System.out.println("\nOops.");
         System.out.println(e.getMessage());
         break;
       }

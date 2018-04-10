@@ -27,9 +27,7 @@ public class Projection extends StateLessRelation {
 			Attribut[] attributsSchemaActuel = rel.getSchema().getAttributs();
 
 			for (int indexSchemaActuel = 0; indexSchemaActuel < attributsSchemaActuel.length; indexSchemaActuel++) {
-				if (attributsSchemaProjection[indexSchemaProjection].getTypeOfAttribut().toString()
-						.equals(attributsSchemaActuel[indexSchemaActuel].getTypeOfAttribut().toString())
-						&& attributsSchemaProjection[indexSchemaProjection].getNomOfAttribut()
+				if (attributsSchemaProjection[indexSchemaProjection].getNomOfAttribut()
 								.equals(attributsSchemaActuel[indexSchemaActuel].getNomOfAttribut())) {
 					indexes.add(indexSchemaActuel);
 				}
