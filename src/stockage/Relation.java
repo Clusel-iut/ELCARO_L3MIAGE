@@ -1,6 +1,5 @@
 package stockage;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 public abstract class Relation implements Iterable<Tuple> {

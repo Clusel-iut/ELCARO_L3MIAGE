@@ -3,7 +3,6 @@ package stockage;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 public class Tuple implements Iterable<Object> {
