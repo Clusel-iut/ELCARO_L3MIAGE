@@ -15,8 +15,8 @@ public abstract class StateLessRelation extends Relation {
 			sb.append(a.getNomOfAttribut());
 		}
 		Iterator<Tuple> it = this.iterator();
-		while(it.hasNext())
-			sb.append("\n" + "\t"+it.next().toString());
+		while (it.hasNext())
+			sb.append("\n" + "\t" + it.next().toString());
 		return sb.toString();
 	}
 

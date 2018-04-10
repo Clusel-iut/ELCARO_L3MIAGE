@@ -33,7 +33,7 @@ public class Tuple implements Iterable<Object> {
 	}
 	
 	public Tuple(ArrayList<Object> valeurs) {
-		this.valeurs = new Tuple[valeurs.size()];
+		this.valeurs = new Object[valeurs.size()];
 		valeurs.toArray(this.valeurs);
 	}
 
