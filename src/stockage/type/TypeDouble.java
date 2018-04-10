@@ -6,6 +6,9 @@ import java.io.IOException;
 
 public class TypeDouble extends Type<Double> {
 	
+	/**
+	 *  \\\\\\
+	 */
 	public TypeDouble() {
 		super();
 		this.nomType = "TypeDouble";
