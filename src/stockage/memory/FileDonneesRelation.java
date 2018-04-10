@@ -5,7 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import stockage.Attribut;
 import stockage.Schema;
 import stockage.StateFullRelation;
 import stockage.Tuple;
@@ -15,45 +17,66 @@ public class FileDonneesRelation extends StateFullRelation {
 	/** Accès aux tuples. */
 	private DataInputStream isTuples;
 	private DataOutputStream osTuples;
+	private int counter;
 
 	/**
 	 * @param name
 	 *            : nom de la table de base de donnée
 	 * @param schema
 	 *            : contient les colonnes de la tables
+	 * @throws IOException
 	 */
-	public FileDonneesRelation(String name, Schema schema, DataInputStream is, DataOutputStream os) {
-		super(name, schema); // TODO le schema n'ai pas dans le fichier
+	public FileDonneesRelation(String name, Schema schema, DataInputStream is, DataOutputStream os) throws IOException {
+		super(name, schema);
 		this.isTuples = is;
 		this.osTuples = os;
+		this.osTuples.writeUTF(name);
+		schema.ecrireSchema(this.osTuples);
+		this.osTuples.flush();
+		this.counter = 0;
+		isTuples.mark(isTuples.available());
 	}
 
 	public Iterator<Tuple> iterator() {
-		return new Iterator<Tuple>() {
+		try {
+			return new Iterator<Tuple>() {
 
-			@Override
-			public boolean hasNext() {
-				try {
-					return (isTuples.available() > 0);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				private int index = counter;
+
+				{
+					isTuples.reset();
 				}
-				return false; // TODO use throws case
-			}
 
-			@Override
-			public Tuple next() {
-				// TODO index à ajouter pour ne pas lire toujours le premier
-				try {
-					return getSchema().deserialisation(isTuples);
-				} catch (IOException e) {
-					e.printStackTrace();
+				@Override
+				public boolean hasNext() {
+					try {
+						return (isTuples.available() > 0 && index > 0);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return false;
 				}
-				return null; // TODO use throws case
-			}
 
-		};
+				@Override
+				public Tuple next() {
+					try {
+						index--;
+						List<Object> tuple = new ArrayList<Object>();
+						for (Attribut a : getSchema().getAttributs()) {
+							tuple.add(a.getTypeOfAttribut().read(isTuples));
+						}
+						return new Tuple(tuple);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return null;
+				}
+			};
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -63,13 +86,9 @@ public class FileDonneesRelation extends StateFullRelation {
 	 * @throws IOException
 	 */
 	public void addTuple(Tuple tuple) throws IOException {
-		isTuples.skipBytes(isTuples.available());
-		while (iterator().hasNext())
-			iterator().next();
-
+		this.counter++;
+		// this.isTuples.skipBytes(isTuples.available());
 		tuple.ecrireTuple(osTuples, getSchema());
-
-		isTuples.reset();
 	}
 
 	/**
@@ -87,7 +106,6 @@ public class FileDonneesRelation extends StateFullRelation {
 			if (tuple.equals(t))
 				break;
 		}
-
 		if (tuple.equals(t)) {
 			ArrayList<Object> lo = new ArrayList<Object>();
 			for (int i = 0; i < getSchema().getAttributs().length; i++) {
@@ -98,11 +116,6 @@ public class FileDonneesRelation extends StateFullRelation {
 	}
 
 	public int nbTuples() {
-		try {
-			return isTuples.available() / getSchema().getAttributs().length;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return -1;
+		return -1; // TODO à finir
 	}
 }

@@ -14,7 +14,6 @@ public class TypeInteger extends Type<Integer> {
 	@Override
 	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
 		os.writeInt((int) valeur);
-		
 	}
 
 	@Override
