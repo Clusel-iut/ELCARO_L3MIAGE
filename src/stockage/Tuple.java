@@ -1,28 +1,32 @@
 package stockage;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import stockage.type.Type;
 
 public class Tuple implements Iterable<Object> {
 
 	@Override
 	public String toString() {
 		if (this.valeurs == null)
-            return "null";
+			return "null";
 
-        int iMax = this.valeurs.length - 1;
-        if (iMax == -1)
-            return "vide";
+		int iMax = this.valeurs.length - 1;
+		if (iMax == -1)
+			return "vide";
 
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; ; i++) {
-            b.append(String.valueOf(this.valeurs[i]));
-            if (i == iMax)
-                return b.toString();
-            b.append("\t");
-        }
+		StringBuilder b = new StringBuilder();
+		for (int i = 0;; i++) {
+			b.append(String.valueOf(this.valeurs[i]));
+			if (i == iMax)
+				return b.toString();
+			b.append("\t");
+		}
 	}
 
 	private final Object[] valeurs;
@@ -31,7 +35,7 @@ public class Tuple implements Iterable<Object> {
 		super();
 		this.valeurs = v;
 	}
-	
+
 	public Tuple(ArrayList<Object> valeurs) {
 		this.valeurs = new Object[valeurs.size()];
 		valeurs.toArray(this.valeurs);
@@ -52,11 +56,18 @@ public class Tuple implements Iterable<Object> {
 			public Object next() {
 				return valeurs[index++];
 			}
-
 		};
 	}
 
-	// TODO Serialisation / Deserialisation finish
+	public Tuple deserialisation(DataInputStream is, Schema schema) throws IOException {
+		System.out.println("Deserial");
+		List<Object> tuple = new ArrayList<Object>();
+		for (Attribut a : schema) {
+			tuple.add((Type<?>) a.getTypeOfAttribut().read(is));
+			System.out.println(tuple.size() + " : " + tuple.toString());
+		}
+		return new Tuple(tuple);
+	}
 
 	public <T> T getValue(int index) {
 		if (valeurs.length <= index)
@@ -77,9 +88,11 @@ public class Tuple implements Iterable<Object> {
 	}
 
 	public void ecrireTuple(DataOutputStream osTuples, Schema schema) throws IOException {
-		for (Attribut a : schema) {
-			for (int index = 0; index < schema.getAttributs().length; index++)
-				a.getTypeOfAttribut().write(osTuples, (a.getTypeOfAttribut().getType()).cast(this.getValue(index)));
+		int index = 0;
+		for (Attribut a : schema.getAttributs()) {
+			a.getTypeOfAttribut().write(osTuples, (a.getTypeOfAttribut().getType()).cast(this.getValue(index++)));
+			System.out.print((a.getTypeOfAttribut().getType()).cast(this.getValue(index-1)).toString() + " ");
 		}
+		System.out.println();
 	}
 }

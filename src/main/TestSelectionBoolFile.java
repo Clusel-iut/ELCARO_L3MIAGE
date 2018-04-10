@@ -19,10 +19,10 @@ import stockage.Relation;
 import stockage.Schema;
 import stockage.Tuple;
 import stockage.memory.FileDonneesRelation;
-import stockage.type.StringBuff;
-import stockage.type.TypeVarchar;
+import stockage.type.TypeBoolean;
+import stockage.type.TypeInteger;
 
-public class TestSelectionStringFile {
+public class TestSelectionBoolFile {
 
 	public static void main(String[] args) {
 
@@ -32,31 +32,36 @@ public class TestSelectionStringFile {
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File("test.primitif"))));
 			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(new File("test.primitif"))));
 
-			Schema sc = new Schema(new Attribut(new TypeVarchar(), "NOM"), new Attribut(new TypeVarchar(), "PRENOM"));
+			Schema sc = new Schema(new Attribut(new TypeInteger(), "ENTIER"), new Attribut(new TypeBoolean(), "ESTCEUNNOMBRE"));
 			FileDonneesRelation fd = new FileDonneesRelation("RELATION", sc, dis, dos);
 
-			fd.addTuple(new Tuple(new StringBuff("MORAT"), new StringBuff("PHILIPPE")));
-			fd.addTuple(new Tuple(new StringBuff("PIGNARD"), new StringBuff("FLORIAN")));
-			fd.addTuple(new Tuple(new StringBuff("MONBEIG"), new StringBuff("JONATHAN")));
-			fd.addTuple(new Tuple(new StringBuff("CLUSEL"), new StringBuff("MATHIEU")));
+			fd.addTuple(new Tuple(new Integer(785), new Boolean(true)));
+			fd.addTuple(new Tuple(new Integer(9), new Boolean(false)));
+			fd.addTuple(new Tuple(new Integer(10), new Boolean(true)));
+			fd.addTuple(new Tuple(new Integer(416), new Boolean(true)));
 
 			ArrayList<Relation> ar = new ArrayList<Relation>();
 			ar.add(fd);
 			BD bd = new BD(ar);
 			System.out.print(bd.toString());
-			
-			System.out.println("\nSelection des noms suppérieur à 6");
-			Relation s = new Selection(fd, new Predicat() {
+
+			System.out.println("\nSelection des entier superieur à 400");
+			Relation s1 = new Selection(fd, new Predicat() {
 				@Override
 				public boolean eval(Tuple tuple) {
-					return ((StringBuff) tuple.getValue(0)).sb.toString().length() > 6;
+					return (Integer) tuple.getValue(0) > 400;
 				}
 			});
-			System.out.println(s.toString());
-
-			System.out.println("\nSuppression d'un tuple");
-			fd.deleteTuple(new Tuple(new StringBuff("MORAT"), new StringBuff("PHILIPPE")));
-			System.out.print(bd.toString());
+			System.out.println(s1.toString());
+			
+			System.out.println("\nSelection des nombres");
+			Relation s2 = new Selection(fd, new Predicat() {
+				@Override
+				public boolean eval(Tuple tuple) {
+					return tuple.getValue(1).equals(new Boolean(false));
+				}
+			});
+			System.out.println(s2.toString());
 			
 			dos.close();
 			dis.close();

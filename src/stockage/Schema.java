@@ -2,6 +2,7 @@ package stockage;
 
 import java.beans.XMLEncoder;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,11 +74,18 @@ public class Schema implements Iterable<Attribut> {
 
 	public Tuple deserialisation(DataInputStream is) throws IOException {
 		List<Attribut> tuple = new ArrayList<Attribut>();
-		for (Attribut a : this) {
-			// TODO NOT SAFE CAST Serialization
+		for (Attribut a : this.attributs) {
 			tuple.add(new Attribut((Type<?>) a.getTypeOfAttribut().read(is), a.getNomOfAttribut()));
 		}
 		return new Tuple(tuple);
+	}
+	
+	public void ecrireSchema(DataOutputStream osTuples) throws IOException {
+		for (Attribut a : this.attributs) {
+			for (int index = 0; index < this.attributs.length; index++) {
+				osTuples.writeUTF(a.toString());
+			}
+		}
 	}
 	
 	public String toString() {
