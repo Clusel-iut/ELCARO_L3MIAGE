@@ -8,7 +8,7 @@ public abstract class StateLessRelation extends Relation {
 		super(name, schema);
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		StringBuffer sb = new StringBuffer();
 		for (Attribut a : this.getSchema()) {
 			sb.append("\t ");
@@ -19,5 +19,4 @@ public abstract class StateLessRelation extends Relation {
 			sb.append("\n" + "\t" + it.next().toString());
 		return sb.toString();
 	}
-
 }

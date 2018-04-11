@@ -8,6 +8,10 @@ public class Projection extends StateLessRelation {
 	private final Relation rel;
 	private ArrayList<Integer> indexes;
 
+	/**
+	 * @param rel : les données de la base de donnée
+	 * @param schema : les colonnes selectionnées
+	 */
 	public Projection(Relation rel, Schema schema) {
 		super(String.format("projection(%s)", rel), schema);
 		this.rel = rel;
@@ -19,13 +23,15 @@ public class Projection extends StateLessRelation {
 		}
 	}
 
+	/**
+	 * Permet de récupérer les indexes des colonnes voulues du schéma de la relation.
+	 * @param schema : les colonnes selectionnées
+	 * @throws Exception : Attribut(s) introuvable(s)
+	 */
 	private void getIndexes(Schema schema) throws Exception {
-
 		Attribut[] attributsSchemaProjection = schema.getAttributs();
-
 		for (int indexSchemaProjection = 0; indexSchemaProjection < attributsSchemaProjection.length; indexSchemaProjection++) {
 			Attribut[] attributsSchemaActuel = rel.getSchema().getAttributs();
-
 			for (int indexSchemaActuel = 0; indexSchemaActuel < attributsSchemaActuel.length; indexSchemaActuel++) {
 				if (attributsSchemaProjection[indexSchemaProjection].getNomOfAttribut()
 								.equals(attributsSchemaActuel[indexSchemaActuel].getNomOfAttribut())) {
@@ -33,25 +39,21 @@ public class Projection extends StateLessRelation {
 				}
 			}
 		}
-
 		if (attributsSchemaProjection.length != indexes.size()) {
 			throw new Exception("Attribut(s) introuvable(s)");
 		}
 	}
 
-	@Override
-	public Iterator<Tuple> iterator() {
+	@Override public Iterator<Tuple> iterator() {
 		return new Iterator<Tuple>() {
 			private Iterator<Tuple> iterator = rel.iterator();
 			private Tuple nextTuple;
 
-			@Override
-			public boolean hasNext() {
+			@Override public boolean hasNext() {
 				return iterator.hasNext();
 			}
-
-			@Override
-			public Tuple next() {
+			
+			@Override public Tuple next() {
 				setNext();
 				return nextTuple;
 			}

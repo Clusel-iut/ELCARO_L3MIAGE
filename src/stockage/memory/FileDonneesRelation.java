@@ -14,16 +14,15 @@ import stockage.Tuple;
 
 public class FileDonneesRelation extends StateFullRelation {
 
-	/** AccÃ¨s aux tuples. */
+	/** Accès aux tuples. */
 	private DataInputStream isTuples;
 	private DataOutputStream osTuples;
+	/** Permet de savoir combient de tuples sont disponnibles */
 	private int counter;
 
 	/**
-	 * @param name
-	 *            : nom de la table de base de donnÃ©e
-	 * @param schema
-	 *            : contient les colonnes de la tables
+	 * @param name : nom de la table de base de donnÃ©e
+	 * @param schema : contient les colonnes de la tables
 	 * @throws IOException
 	 */
 	public FileDonneesRelation(String name, Schema schema, DataInputStream is, DataOutputStream os) throws IOException {
@@ -40,15 +39,11 @@ public class FileDonneesRelation extends StateFullRelation {
 	public Iterator<Tuple> iterator() {
 		try {
 			return new Iterator<Tuple>() {
-
 				private int index = counter;
 
-				{
-					isTuples.reset();
-				}
+				{ isTuples.reset();}
 
-				@Override
-				public boolean hasNext() {
+				@Override public boolean hasNext() {
 					try {
 						return (isTuples.available() > 0 && index > 0);
 					} catch (IOException e) {
@@ -57,8 +52,7 @@ public class FileDonneesRelation extends StateFullRelation {
 					return false;
 				}
 
-				@Override
-				public Tuple next() {
+				@Override public Tuple next() {
 					try {
 						index--;
 						List<Object> tuple = new ArrayList<Object>();
@@ -92,13 +86,11 @@ public class FileDonneesRelation extends StateFullRelation {
 	}
 
 	/**
-	 * Permet de supprimer le tuple de la table. On le replace par un tuple
-	 * null.
-	 * 
+	 * Permet de supprimer le tuple de la table. On le replace par un tuple null.
 	 * @param tuple
 	 * @throws IOException
 	 */
-	// TODO faire methode qui enlÃ¨ve les lignes totalement null
+	// TODO faire methode qui enlève les lignes totalement null
 	public void deleteTuple(Tuple tuple) throws IOException {
 		Tuple t = new Tuple();
 		while (iterator().hasNext()) {
@@ -115,7 +107,10 @@ public class FileDonneesRelation extends StateFullRelation {
 		}
 	}
 
-	public int nbTuples() {
-		return -1; // TODO Ã  finir
+	/**
+	 * Permet de récupérer le nombre de tuple dans la relation
+	 */
+	@Override public int nbTuples() {
+		return counter;
 	}
 }

@@ -13,6 +13,10 @@ public class Produit extends StateLessRelation {
 	private final Relation rel2;
 	private final Schema sc;
 
+	/**
+	 * @param rel1 : les données d'une base de donnée
+	 * @param rel2 : les données d'une autre base de donnée
+	 */
 	public Produit(Relation rel1, Relation rel2) {
 		super(String.format("produit(%s%s)", rel1, rel2), new Schema(rel1.getSchema(), rel2.getSchema()));
 		this.sc = new Schema(rel1.getSchema(), rel2.getSchema());
@@ -20,23 +24,19 @@ public class Produit extends StateLessRelation {
 		this.rel2 = rel2;
 	}
 
-	@Override
-	public Iterator<Tuple> iterator() {
+	@Override public Iterator<Tuple> iterator() {
 		return new Iterator<Tuple>() {
 			private Iterator<Tuple> iterator1 = rel1.iterator();
 			private Iterator<Tuple> iterator2 = rel2.iterator();
 			private Tuple nextTuple;
 
-			@Override
-			public boolean hasNext() {
-				// TODO ils doivent avoir le mÃªme nombres de tuples ?
-				// TODO Lever une erreur s'il reste des tuples dans l'un des
-				// deux ?
+			@Override public boolean hasNext() {
+				// TODO ils doivent avoir le même nombres de tuples ?
+				// TODO Lever une erreur s'il reste des tuples dans l'un des deux ?
 				return iterator1.hasNext() && iterator2.hasNext();
 			}
 
-			@Override
-			public Tuple next() {
+			@Override public Tuple next() {
 				setNext();
 				return nextTuple;
 			}
@@ -44,7 +44,6 @@ public class Produit extends StateLessRelation {
 			private void setNext() {
 				Tuple t1 = iterator1.next();
 				Tuple t2 = iterator2.next();
-
 				ArrayList<Object> attributs = new ArrayList<Object>();
 				for (int index = 0; index < sc.getAttributs().length; index++) {
 					if (index < rel1.getSchema().getAttributs().length) {
@@ -57,5 +56,4 @@ public class Produit extends StateLessRelation {
 			}
 		};
 	}
-
 }

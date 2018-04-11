@@ -11,27 +11,19 @@ public class TypeByte extends Type<Byte> {
 		this.nomType = "TypeByte";
 	}
 	
-	@Override
-	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
+	@Override public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
 		os.writeByte((int) valeur);
-		
 	}
 
-	@Override
-	public Byte read(DataInputStream is) throws IOException {
+	@Override public Byte read(DataInputStream is) throws IOException {
 		return is.readByte();
 	}
 
-	@Override
-	public Byte parse(String data) {
+	@Override public Byte parse(String data) {
 		return new Byte(data);
 	}
 
-	@Override
-	public Class<? extends Comparable<?>> getType() {
+	@Override public Class<? extends Comparable<?>> getType() {
 		return Byte.class;
 	}
-
-
-
 }

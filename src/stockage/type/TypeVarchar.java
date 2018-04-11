@@ -11,24 +11,19 @@ public class TypeVarchar extends Type<StringBuff> {
 		this.nomType = "TypeVarchar";
 	}
 
-	@Override
-	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
+	@Override public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
 		os.writeUTF(valeur.toString()); //TODO CHANGE
 	}
 
-	@Override
-	public StringBuff read(DataInputStream is) throws IOException {
+	@Override public StringBuff read(DataInputStream is) throws IOException {
 		return new StringBuff(); //TODO USE is
 	}
 
-	@Override
-	public StringBuff parse(String data) {
+	@Override public StringBuff parse(String data) {
 		return new StringBuff(data);
 	}
 
-	@Override
-	public Class<? extends Comparable<?>> getType() {
+	@Override public Class<? extends Comparable<?>> getType() {
 		return StringBuff.class;
 	}
-
 }

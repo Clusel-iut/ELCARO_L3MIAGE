@@ -11,24 +11,19 @@ public class TypeInteger extends Type<Integer> {
 		this.nomType = "TypeInteger";
 	}
 
-	@Override
-	public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
+	@Override public void write(DataOutputStream os, Comparable<?> valeur) throws IOException {
 		os.writeInt((int) valeur);
 	}
 
-	@Override
-	public Integer read(DataInputStream is) throws IOException {
+	@Override public Integer read(DataInputStream is) throws IOException {
 		return is.readInt();
 	}
 
-	@Override
-	public Integer parse(String data) {
+	@Override public Integer parse(String data) {
 		return new Integer(data);
 	}
 
-	@Override
-	public Class<? extends Comparable<?>> getType() {
+	@Override public Class<? extends Comparable<?>> getType() {
 		return Integer.class;
 	}
-	
 }

@@ -4,11 +4,13 @@ import java.util.Iterator;
 import stockage.*;
 
 public class Selection extends StateLessRelation {
-	
 	private final Relation rel;
-	
 	private Predicat predicat;
 	
+	/**
+	 * @param rel : les données de la base de donnée
+	 * @param predicat : un prédicat
+	 */
 	public Selection(Relation rel, Predicat predicat) {
 		super(String.format("Selection(%s)",rel),rel.getSchema());
 		this.rel = rel;
@@ -20,8 +22,11 @@ public class Selection extends StateLessRelation {
 			private Iterator<Tuple> iterator = rel.iterator();
 			private Tuple nextTuple;
 			private boolean hasNext;
+			
 			{setNext();}
+			
 			@Override public boolean hasNext() {return hasNext;}
+			
 			@Override public Tuple next(){
 				Tuple temp = nextTuple;
 				setNext();

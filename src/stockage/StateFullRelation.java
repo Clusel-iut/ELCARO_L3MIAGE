@@ -8,11 +8,15 @@ public abstract class StateFullRelation extends Relation {
 		super(name, schema);
 	}
 
+	/**
+	 * Permet de savoir combient de tuple possède la relation
+	 * @return le nombre de tuple de la relation
+	 */
 	public abstract int nbTuples();
 
-	public String toString() {
+	@Override public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(this.getName() + "(" + this.getSchema().toString() + ") with " + this.nbTuples() + " tuples\n");
+		sb.append(this.getName() + "(" + this.getSchema().toString()+ ") with " + this.nbTuples() + " tuples\n");
 		for (Attribut a : this.getSchema()) {
 			sb.append("\t " + a.getNomOfAttribut());
 		}

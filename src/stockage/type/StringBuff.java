@@ -2,8 +2,7 @@ package stockage.type;
 
 public class StringBuff implements Comparable<StringBuff> {
 	
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		return sb.toString();
 	}
 
@@ -17,8 +16,7 @@ public class StringBuff implements Comparable<StringBuff> {
 		sb = new StringBuffer(data);
 	}
 
-	@Override
-	public int compareTo(StringBuff s) {
+	@Override public int compareTo(StringBuff s) {
 		return sb.toString().compareTo(s.toString());
 	}
 

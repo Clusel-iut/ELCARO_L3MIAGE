@@ -12,6 +12,11 @@ public class Difference extends StateLessRelation {
 	private Predicat predicat1;
 	private Predicat predicat2;
 
+	/**
+	 * @param rel : les données de la base de donnée
+	 * @param predicat1 : Prédicat de base
+	 * @param predicat2 : Prédicat à soustraire
+	 */
 	public Difference(Relation rel, Predicat predicat1, Predicat predicat2) {
 		super(String.format("Intersection(%s)", rel), rel.getSchema());
 		this.rel = rel;
@@ -22,38 +27,32 @@ public class Difference extends StateLessRelation {
 	@Override
 	public Iterator<Tuple> iterator() {
 		return new Iterator<Tuple>() {
-
-			private Iterator<Tuple> iterator = rel.iterator();
+			private Iterator<Tuple> iterator = Difference.this.rel.iterator();
 			private Tuple nextTuple;
 			private boolean hasNext;
 
-			{
-				setNext();
-			}
+			{ this.setNext(); }
 
 			@Override
 			public boolean hasNext() {
-				return hasNext;
+				return this.hasNext;
 			}
 
 			@Override
 			public Tuple next() {
-				Tuple temp = nextTuple;
-				setNext();
+				Tuple temp = this.nextTuple;
+				this.setNext();
 				return temp;
 			}
 
-			// TODO error sur le dernier Ã©lÃ©ment
 			private void setNext() {
 				boolean b = false;
-				while (iterator.hasNext() && !b)
-				{
-					nextTuple = iterator.next();
-					b =(predicat1.eval(nextTuple) && !predicat2.eval(nextTuple));
-				} 
-				hasNext = b;
+				while (this.iterator.hasNext() && !b) {
+					this.nextTuple = this.iterator.next();
+					b = (Difference.this.predicat1.eval(this.nextTuple) && !Difference.this.predicat2.eval(this.nextTuple));
+				}
+				this.hasNext = b;
 			}
 		};
 	}
-
 }

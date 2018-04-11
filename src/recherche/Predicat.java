@@ -1,44 +1,48 @@
 package recherche;
-import stockage.*;
 
-import stockage.*;
+import stockage.Tuple;
 
 public abstract class Predicat {
+	/**
+	 * @param tuple : un tuple
+	 * @return true si le tuple correspond au critère sinon false.
+	 */
 	public abstract boolean eval(Tuple tuple);
-	
-	public static Predicat createPredicat(int attrIndex, Object value, String operator)
-	{
+
+	/**
+	 * @param attrIndex : 
+	 * @param value : 
+	 * @param operator :
+	 * @return 
+	 */
+	public static Predicat createPredicat(int attrIndex, Object value, String operator) {
 		Predicat pred = null;
-		switch(operator)
-		{
+		switch (operator) {
 		case "=":
 			pred = new Predicat() {
-				@Override
-				public boolean eval(Tuple tuple) {
+				@Override public boolean eval(Tuple tuple) {
 					return tuple.getValue(attrIndex).equals(value);
 				}
 			};
-		break;
+			break;
 		case ">":
-			if(value.getClass() == Integer.class || value.getClass() == Double.class)
-			{
+			if (value.getClass() == Integer.class || value.getClass() == Double.class) {
 				pred = new Predicat() {
-				@Override
-				public boolean eval(Tuple tuple) {
-					return Integer.parseInt(tuple.getValue(attrIndex).toString()) > Integer.parseInt(value.toString());
-				}};
+					@Override public boolean eval(Tuple tuple) {
+						return Integer.parseInt(tuple.getValue(attrIndex).toString()) > Integer.parseInt(value.toString());
+					}
+				};
 			}
-		break;
+			break;
 		case "<":
-			if(value.getClass() == Integer.class || value.getClass() == Double.class)
-			{
+			if (value.getClass() == Integer.class || value.getClass() == Double.class) {
 				pred = new Predicat() {
-				@Override
-				public boolean eval(Tuple tuple) {
-					return Integer.parseInt(tuple.getValue(attrIndex).toString()) < Integer.parseInt(value.toString());
-				}};
+					@Override public boolean eval(Tuple tuple) {
+						return Integer.parseInt(tuple.getValue(attrIndex).toString()) < Integer.parseInt(value.toString());
+					}
+				};
 			}
-		break;
+			break;
 		}
 		return pred;
 	}
